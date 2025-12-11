@@ -230,6 +230,11 @@ namespace TatehamaATS_v1.Network
         /// <returns>認証に成功したかどうか</returns>
         private async Task<bool> InteractiveAuthenticateAsync(CancellationToken cancellationToken)
         {
+            if (ServerAddress.IsDebug)
+            {
+                return true;
+            }
+
             using var source = new CancellationTokenSource(delay: TimeSpan.FromSeconds(90));
             try
             {
@@ -369,6 +374,7 @@ namespace TatehamaATS_v1.Network
                 {
                     return true; // アクションが必要な場合はtrueを返す
                 }
+
                 SetEventHandlers(); // イベントハンドラを設定
                 return isActionNeeded;
             }
@@ -397,10 +403,12 @@ namespace TatehamaATS_v1.Network
                           or OpenIddictConstants.Errors.ExpiredToken)
             {
                 // ignore: リフレッシュトークンが無効な場合
+                Debug.WriteLine($"Error refreshing token: {ex.Message} {ex.StackTrace}");
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
                 // ignore: リフレッシュトークンが設定されていない場合
+                Debug.WriteLine($"Error refreshing token: {ex.Message} {ex.StackTrace}");
             }
             catch (Exception ex)
             {
@@ -423,6 +431,7 @@ namespace TatehamaATS_v1.Network
                 connectErrorDialog = false;
                 return r;
             }
+
             Debug.WriteLine("Reconnected after re-authentication.");
             return true;
         }
@@ -488,6 +497,7 @@ namespace TatehamaATS_v1.Network
             {
                 throw new InvalidOperationException("_connection is not initialized.");
             }
+
             if (_eventHandlersSet)
             {
                 return; // イベントハンドラは一度だけ設定する
