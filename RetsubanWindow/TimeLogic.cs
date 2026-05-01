@@ -10,6 +10,7 @@ using TatehamaATS_v1.Exceptions;
 using TatehamaATS_v1.OnboardDevice;
 using TatehamaATS_v1.Utils;
 using TrainCrewAPI;
+using System.Drawing;
 
 namespace TatehamaATS_v1.RetsubanWindow
 {
@@ -17,7 +18,7 @@ namespace TatehamaATS_v1.RetsubanWindow
     {
         private TimeData BeforeTimeData { get; set; }
         private TimeSpan ShiftTime { get; set; } = TimeSpan.FromHours(-10);
-        private Dictionary<string, Image> Images_7seg { get; set; }
+        private Dictionary<string, string> Images_7seg { get; set; }
         private string NewHour { get; set; }
 
         public bool nowSetting;
@@ -56,19 +57,19 @@ namespace TatehamaATS_v1.RetsubanWindow
                 minute = tst_time.Minute,
                 second = tst_time.Second
             };
-            Images_7seg = new Dictionary<string, Image> {
-                {"0",  RetsubanResource._7seg_0} ,
-                {"1",  RetsubanResource._7seg_1} ,
-                {"2",  RetsubanResource._7seg_2} ,
-                {"3",  RetsubanResource._7seg_3} ,
-                {"4",  RetsubanResource._7seg_4} ,
-                {"5",  RetsubanResource._7seg_5} ,
-                {"6",  RetsubanResource._7seg_6} ,
-                {"7",  RetsubanResource._7seg_7} ,
-                {"8",  RetsubanResource._7seg_8} ,
-                {"9",  RetsubanResource._7seg_9} ,
-                {" ",  RetsubanResource._7seg_N} ,
-                {"",  RetsubanResource._7seg_N}
+            Images_7seg = new Dictionary<string, string> {
+                {"0",  "7seg_0"} ,
+                {"1",  "7seg_1"} ,
+                {"2",  "7seg_2"} ,
+                {"3",  "7seg_3"} ,
+                {"4",  "7seg_4"} ,
+                {"5",  "7seg_5"} ,
+                {"6",  "7seg_6"} ,
+                {"7",  "7seg_7"} ,
+                {"8",  "7seg_8"} ,
+                {"9",  "7seg_9"} ,
+                {" ",  "7seg_N"} ,
+                {"",  "7seg_N"}
             };
             NewHour = BeforeTimeData.hour.ToString();
             Time_h2 = time_h2;
@@ -110,20 +111,20 @@ namespace TatehamaATS_v1.RetsubanWindow
         /// <param name="timeData"></param>
         private void TimeDrawing(TimeData timeData, bool hourDot = false)
         {
-            Time_h1.Image = hourDot ? RetsubanResource._7seg_dot : null;
+            Time_h1.Image = hourDot ? RetsubanImageLoader.Load("7seg_dot", Time_h1.Size) : null;
             string hour = timeData.hour.ToString().PadLeft(2, ' ');
             if (nowSetting)
             {
                 hour = NewHour.PadLeft(2, ' ');
             }
-            Time_h2.BackgroundImage = Images_7seg[$"{hour[0]}"];
-            Time_h1.BackgroundImage = Images_7seg[$"{hour[1]}"];
+            Time_h2.BackgroundImage = RetsubanImageLoader.Load(Images_7seg[$"{hour[0]}"] , Time_h2.Size);
+            Time_h1.BackgroundImage = RetsubanImageLoader.Load(Images_7seg[$"{hour[1]}"] , Time_h1.Size);
             string minute = timeData.minute.ToString().PadLeft(2, '0');
-            Time_m2.BackgroundImage = Images_7seg[$"{minute[0]}"];
-            Time_m1.BackgroundImage = Images_7seg[$"{minute[1]}"];
+            Time_m2.BackgroundImage = RetsubanImageLoader.Load(Images_7seg[$"{minute[0]}"] , Time_m2.Size);
+            Time_m1.BackgroundImage = RetsubanImageLoader.Load(Images_7seg[$"{minute[1]}"] , Time_m1.Size);
             string second = timeData.second.ToString().PadLeft(2, '0');
-            Time_s2.BackgroundImage = Images_7seg[$"{second[0]}"];
-            Time_s1.BackgroundImage = Images_7seg[$"{second[1]}"];
+            Time_s2.BackgroundImage = RetsubanImageLoader.Load(Images_7seg[$"{second[0]}"] , Time_s2.Size);
+            Time_s1.BackgroundImage = RetsubanImageLoader.Load(Images_7seg[$"{second[1]}"] , Time_s1.Size);
         }
 
         internal void Buttons_Digit(string Digit)

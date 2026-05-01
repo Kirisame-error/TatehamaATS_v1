@@ -48,12 +48,12 @@ namespace TatehamaATS_v1.RetsubanWindow
             LCD = lcd;
             var lcdfontString =
                 " ，．・：?？！”｜…（）［］＜＞←→＠" +
-                "0123456789回試臨xyz■特停通" +
+                "0123456789回試臨検xyz特停通" +
                 "ABCDEFGHIJKLMNOPQRST" +
                 "UVWXYZŪŌァィゥェォヵヶャュョッー" +
                 "アイウエオカキクケコサシスセソタチツテト" +
                 "ナニヌネノハヒフヘホマミムメモヤ　ユ　ヨ" +
-                "ラリルレロワヰヱヲン゛゜";
+                "ラリルレロワヰヱヲン゛゜　　　　　　■";
 
             // LCDFontListにlcdfontStringを1文字ずつ追加
             foreach (char c in lcdfontString)
@@ -848,13 +848,6 @@ namespace TatehamaATS_v1.RetsubanWindow
             {
                 switch (Name)
                 {
-                    case "特":
-                        if (nowInput is "" or "臨時" or "だんじり")
-                        {
-                            nowInput += "特急";
-                            beep1.PlayOnce(1.0f);
-                        }
-                        break;
                     case "だんじり":
                         nowInput = "だんじり";
                         beep1.PlayOnce(1.0f);
