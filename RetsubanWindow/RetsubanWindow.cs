@@ -33,7 +33,8 @@ namespace TatehamaATS_v1.RetsubanWindow
         Unko
     }
 
-    public partial class RetsubanWindow : Form {
+    public partial class RetsubanWindow : Form
+    {
         private RetsubanLogic retsubanLogic;
         private TimeLogic timeLogic;
         private LCDLogic LCDLogic;
@@ -49,8 +50,11 @@ namespace TatehamaATS_v1.RetsubanWindow
         internal event Action<string> SetDiaNameAction;
         internal event Action<TimeSpan> SetShiftTime;
 
-        internal RetsubanWindow(StopPassManager stopPassManager) {
+        internal RetsubanWindow(StopPassManager stopPassManager)
+        {
             InitializeComponent();
+            // load button images from Image\Retsuban at runtime (use control size so fallback is sized)
+            ApplyButtonImages();
             this.Load += Loaded;
             TopMost = true;
 
@@ -63,27 +67,33 @@ namespace TatehamaATS_v1.RetsubanWindow
             timeLogic.SetShiftTime += OnSetShiftTime;
         }
 
-        private void OnSetDiaName(string retsuban) {
+        private void OnSetDiaName(string retsuban)
+        {
             SetDiaNameAction?.Invoke(retsuban); // 外部への伝播
             LCDLogic?.SetRetsuban(retsuban);     // LCDLogicへの伝播
         }
 
-        private void OnSetShiftTime(TimeSpan shiftTime) {
+        private void OnSetShiftTime(TimeSpan shiftTime)
+        {
             SetShiftTime?.Invoke(shiftTime);
         }
 
-        private void Loaded(object sender, EventArgs e) {
+        private void Loaded(object sender, EventArgs e)
+        {
             RetsubanDrawing();
         }
 
-        private void RetsubanWindow_FormClosing(object sender, FormClosingEventArgs e) {
+        private void RetsubanWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
             //閉じずに消す
             Hide();
             e.Cancel = true;
         }
 
-        private void LampDrawing() {
-            if (timeLogic == null) {
+        private void LampDrawing()
+        {
+            if (timeLogic == null)
+            {
                 return;
             }
             Lamp_Retsuban.Visible = retsubanLogic.nowRetsuSetting;
@@ -92,8 +102,10 @@ namespace TatehamaATS_v1.RetsubanWindow
         }
 
 
-        private void ClockTimer_Tick(object sender, EventArgs e) {
-            if (timeLogic == null) {
+        private void ClockTimer_Tick(object sender, EventArgs e)
+        {
+            if (timeLogic == null)
+            {
                 return;
             }
             timeLogic.ClockTimer_Tick();
@@ -104,14 +116,17 @@ namespace TatehamaATS_v1.RetsubanWindow
         /// <summary>
         /// 列番部描画
         /// </summary>
-        private void RetsubanDrawing() {
+        private void RetsubanDrawing()
+        {
             retsubanLogic.RetsubanDrawing();
         }
 
 
-        private void Buttons_Click(string Name, ButtonType buttonType) {
+        private void Buttons_Click(string Name, ButtonType buttonType)
+        {
             Debug.WriteLine($"押下：{Name}/{buttonType}");
-            switch (buttonType) {
+            switch (buttonType)
+            {
                 case ButtonType.Function:
                     retsubanLogic.Buttons_Func(Name);
                     timeLogic.Buttons_Func(Name);
@@ -147,151 +162,189 @@ namespace TatehamaATS_v1.RetsubanWindow
             }
         }
 
-        private void Button_RetsuSet_Click(object sender, EventArgs e) {
+        private void Button_RetsuSet_Click(object sender, EventArgs e)
+        {
             Buttons_Click("RetsuSet", ButtonType.Function);
         }
 
-        private void Button_CarSet_Click(object sender, EventArgs e) {
+        private void Button_CarSet_Click(object sender, EventArgs e)
+        {
             Buttons_Click("CarSet", ButtonType.Function);
         }
 
-        private void Button_TimeSet_Click(object sender, EventArgs e) {
+        private void Button_TimeSet_Click(object sender, EventArgs e)
+        {
             Buttons_Click("TimeSet", ButtonType.Function);
         }
 
-        private void Button_UnkoSet_Click(object sender, EventArgs e) {
+        private void Button_UnkoSet_Click(object sender, EventArgs e)
+        {
             Buttons_Click("UnkoSet", ButtonType.Function);
         }
 
-        private void Button_StopSet_Click(object sender, EventArgs e) {
+        private void Button_StopSet_Click(object sender, EventArgs e)
+        {
             Buttons_Click("StopSet", ButtonType.Function);
         }
 
-        private void Button_VerDisplay_Click(object sender, EventArgs e) {
+        private void Button_VerDisplay_Click(object sender, EventArgs e)
+        {
             Buttons_Click("VerDisplay", ButtonType.Function);
         }
 
-        private void Button_A_Click(object sender, EventArgs e) {
+        private void Button_A_Click(object sender, EventArgs e)
+        {
             Buttons_Click("A", ButtonType.RetsuTailType);
         }
 
-        private void Button_B_Click(object sender, EventArgs e) {
+        private void Button_B_Click(object sender, EventArgs e)
+        {
             Buttons_Click("B", ButtonType.RetsuTailType);
         }
 
-        private void Button_C_Click(object sender, EventArgs e) {
+        private void Button_C_Click(object sender, EventArgs e)
+        {
             Buttons_Click("C", ButtonType.RetsuTailType);
         }
 
-        private void Button_D_Click(object sender, EventArgs e) {
+        private void Button_D_Click(object sender, EventArgs e)
+        {
             Buttons_Click("D", ButtonType.RetsuTailType);
         }
 
-        private void Button_K_Click(object sender, EventArgs e) {
+        private void Button_K_Click(object sender, EventArgs e)
+        {
             Buttons_Click("K", ButtonType.RetsuTailType);
         }
 
-        private void Button_S_Click(object sender, EventArgs e) {
-            Buttons_Click("S", ButtonType.RetsuTailOther);
+        private void Button_S_Click(object sender, EventArgs e)
+        {
+            Buttons_Click("S", ButtonType.RetsuTailCompany);
         }
 
-        private void Button_T_Click(object sender, EventArgs e) {
-            Buttons_Click("T", ButtonType.RetsuTailOther);
+        private void Button_T_Click(object sender, EventArgs e)
+        {
+            Buttons_Click("T", ButtonType.RetsuTailCompany);
         }
 
-        private void Button_X_Click(object sender, EventArgs e) {
+        private void Button_X_Click(object sender, EventArgs e)
+        {
             Buttons_Click("X", ButtonType.RetsuTailOther);
         }
 
-        private void Button_Y_Click(object sender, EventArgs e) {
+        private void Button_Y_Click(object sender, EventArgs e)
+        {
             Buttons_Click("Y", ButtonType.RetsuTailOther);
         }
 
-        private void Button_Z_Click(object sender, EventArgs e) {
+        private void Button_Z_Click(object sender, EventArgs e)
+        {
             Buttons_Click("Z", ButtonType.RetsuTailOther);
         }
-        private void Button_Danjiri_Click(object sender, EventArgs e) {
+        private void Button_Danjiri_Click(object sender, EventArgs e)
+        {
             Buttons_Click("だんじり", ButtonType.RetsuTailOther);
         }
 
-        private void Button_Toku_Click(object sender, EventArgs e) {
-            Buttons_Click("特", ButtonType.RetsuTailOther);
+        private void Button_Toku_Click(object sender, EventArgs e)
+        {
+            Buttons_Click("検", ButtonType.RetsuTailOther);
         }
 
-        private void Button_Kai_Click(object sender, EventArgs e) {
+        private void Button_Kai_Click(object sender, EventArgs e)
+        {
             Buttons_Click("回", ButtonType.RetsuHead);
         }
 
-        private void Button_Shi_Click(object sender, EventArgs e) {
+        private void Button_Shi_Click(object sender, EventArgs e)
+        {
             Buttons_Click("試", ButtonType.RetsuHead);
         }
 
-        private void Button_Rin_Click(object sender, EventArgs e) {
+        private void Button_Rin_Click(object sender, EventArgs e)
+        {
             Buttons_Click("臨", ButtonType.RetsuHead);
         }
 
-        private void Button_0_Click(object sender, EventArgs e) {
+        private void Button_0_Click(object sender, EventArgs e)
+        {
             Buttons_Click("0", ButtonType.Digit);
         }
 
-        private void Button_1_Click(object sender, EventArgs e) {
+        private void Button_1_Click(object sender, EventArgs e)
+        {
             Buttons_Click("1", ButtonType.Digit);
         }
 
-        private void Button_2_Click(object sender, EventArgs e) {
+        private void Button_2_Click(object sender, EventArgs e)
+        {
             Buttons_Click("2", ButtonType.Digit);
         }
 
-        private void Button_3_Click(object sender, EventArgs e) {
+        private void Button_3_Click(object sender, EventArgs e)
+        {
             Buttons_Click("3", ButtonType.Digit);
         }
 
-        private void Button_4_Click(object sender, EventArgs e) {
+        private void Button_4_Click(object sender, EventArgs e)
+        {
             Buttons_Click("4", ButtonType.Digit);
         }
 
-        private void Button_5_Click(object sender, EventArgs e) {
+        private void Button_5_Click(object sender, EventArgs e)
+        {
             Buttons_Click("5", ButtonType.Digit);
         }
 
-        private void Button_6_Click(object sender, EventArgs e) {
+        private void Button_6_Click(object sender, EventArgs e)
+        {
             Buttons_Click("6", ButtonType.Digit);
         }
 
-        private void Button_7_Click(object sender, EventArgs e) {
+        private void Button_7_Click(object sender, EventArgs e)
+        {
             Buttons_Click("7", ButtonType.Digit);
         }
 
-        private void Button_8_Click(object sender, EventArgs e) {
+        private void Button_8_Click(object sender, EventArgs e)
+        {
             Buttons_Click("8", ButtonType.Digit);
         }
 
-        private void Button_9_Click(object sender, EventArgs e) {
+        private void Button_9_Click(object sender, EventArgs e)
+        {
             Buttons_Click("9", ButtonType.Digit);
         }
 
-        private void Button_Tei_Click(object sender, EventArgs e) {
+        private void Button_Tei_Click(object sender, EventArgs e)
+        {
             Buttons_Click("停", ButtonType.StopPass);
         }
 
-        private void Button_Tsu_Click(object sender, EventArgs e) {
+        private void Button_Tsu_Click(object sender, EventArgs e)
+        {
             Buttons_Click("通", ButtonType.StopPass);
         }
 
-        private void Button_Set_Click(object sender, EventArgs e) {
+        private void Button_Set_Click(object sender, EventArgs e)
+        {
             Buttons_Click("Set", ButtonType.Function);
         }
 
-        private void Button_Del_Click(object sender, EventArgs e) {
+        private void Button_Del_Click(object sender, EventArgs e)
+        {
             Buttons_Click("Del", ButtonType.Function);
         }
 
-        private void Button_Clear_Click(object sender, EventArgs e) {
+        private void Button_Clear_Click(object sender, EventArgs e)
+        {
             Buttons_Click("Clear", ButtonType.Function);
         }
 
-        private void RetsubanWindow_KeyDown(object sender, KeyEventArgs e) {
-            switch (e.KeyCode) {
+        private void RetsubanWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
                 case Keys.Enter:
                     Buttons_Click("Set", ButtonType.Function);
                     break;
@@ -411,6 +464,50 @@ namespace TatehamaATS_v1.RetsubanWindow
                 case Keys.P:
                     Buttons_Click("通", ButtonType.StopPass);
                     break;
+            }
+        }
+
+        private void Button_Kai_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        // load images for PictureBox buttons at runtime from Image\Retsuban
+        private void ApplyButtonImages()
+        {
+            foreach (var c in GetAllControls(this))
+            {
+                if (c is PictureBox pb && !string.IsNullOrEmpty(pb.Name) && pb.Name.StartsWith("Button"))
+                {
+                    try
+                    {
+                        // use control size so fallback creates correctly sized magenta image if file missing
+                        var img = RetsubanImageLoader.Load(pb.Name, pb.Size);
+                        pb.BackgroundImage = img;
+                    }
+                    catch
+                    {
+                        // ignore errors here; keep existing image
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<Control> GetAllControls(Control parent)
+        {
+            var stack = new Stack<Control>();
+            stack.Push(parent);
+            while (stack.Count > 0)
+            {
+                var c = stack.Pop();
+                foreach (Control child in c.Controls)
+                {
+                    yield return child;
+                    if (child.HasChildren)
+                    {
+                        stack.Push(child);
+                    }
+                }
             }
         }
     }

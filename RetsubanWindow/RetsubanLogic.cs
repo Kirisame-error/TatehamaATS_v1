@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TakumiteAudioWrapper;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using System.Drawing;
+using System.IO;
 
 namespace TatehamaATS_v1.RetsubanWindow
 {
@@ -23,7 +25,8 @@ namespace TatehamaATS_v1.RetsubanWindow
         private PictureBox Retsuban_Tail { get; set; }
         private PictureBox Car_2 { get; set; }
         private PictureBox Car_1 { get; set; }
-        private Dictionary<string, Image> Images_7seg { get; set; }
+        // store base names for 7-seg images (loaded on demand for proper sizing)
+        private Dictionary<string, string> Images_7seg { get; set; }
 
         /// <summary>
         /// 設定情報変更
@@ -53,18 +56,19 @@ namespace TatehamaATS_v1.RetsubanWindow
             Car = 0;
             NewRetsuban = "";
             NewCar = "";
-            Images_7seg = new Dictionary<string, Image> {
-                {" ",  RetsubanResource._7seg_N} ,
-                {"0",  RetsubanResource._7seg_0} ,
-                {"1",  RetsubanResource._7seg_1} ,
-                {"2",  RetsubanResource._7seg_2} ,
-                {"3",  RetsubanResource._7seg_3} ,
-                {"4",  RetsubanResource._7seg_4} ,
-                {"5",  RetsubanResource._7seg_5} ,
-                {"6",  RetsubanResource._7seg_6} ,
-                {"7",  RetsubanResource._7seg_7} ,
-                {"8",  RetsubanResource._7seg_8} ,
-                {"9",  RetsubanResource._7seg_9} ,
+            // map keys to file base names (file names are expected in Image\Retsuban folder)
+            Images_7seg = new Dictionary<string, string> {
+                {" ",  "7seg_N"} ,
+                {"0",  "7seg_0"} ,
+                {"1",  "7seg_1"} ,
+                {"2",  "7seg_2"} ,
+                {"3",  "7seg_3"} ,
+                {"4",  "7seg_4"} ,
+                {"5",  "7seg_5"} ,
+                {"6",  "7seg_6"} ,
+                {"7",  "7seg_7"} ,
+                {"8",  "7seg_8"} ,
+                {"9",  "7seg_9"} ,
             };
 
             AudioManager = new AudioManager();
@@ -77,6 +81,7 @@ namespace TatehamaATS_v1.RetsubanWindow
 
             set_trainnum?.PlayLoop(1.0f);
             RetsubanDrawing();
+            CarDrawing("");
         }
 
         /// <summary>
@@ -85,7 +90,7 @@ namespace TatehamaATS_v1.RetsubanWindow
         public void RetsubanDrawing()
         {
             // 正規表現パターンの定義                                                       
-            var pattern = @"^(回|試|臨)?([0-9]{0,4})(A|B|C|K|X|Y|Z|AX|BX|CX|KX|AY|BY|CY|KY|AZ|BZ|CZ|KZ)?$";
+            var pattern = @"^(回|臨|臨回|検|試)?([0-9]{0,4})([TS]?[ABCDK]?[XYZ]?)?$";
             var match = Regex.Match(NewRetsuban, pattern);
 
             if (match.Success)
@@ -98,21 +103,39 @@ namespace TatehamaATS_v1.RetsubanWindow
                 // Headに画像を描画
                 Retsuban_Head.Image = head switch
                 {
-                    "回" => RetsubanResource._16dot_Kai,
-                    "試" => RetsubanResource._16dot_Shi,
-                    "臨" => RetsubanResource._16dot_Rin,
-                    _ => RetsubanResource._16dot_Null,
+                    "回" => RetsubanImageLoader.Load("16dot_Kai", Retsuban_Head.Size),
+                    "試" => RetsubanImageLoader.Load("16dot_Shi", Retsuban_Head.Size),
+                    "臨" => RetsubanImageLoader.Load("16dot_Rin", Retsuban_Head.Size),
+                    "臨回" => RetsubanImageLoader.Load("16dot_Rinkai", Retsuban_Head.Size),
+                    "検" => RetsubanImageLoader.Load("16dot_Ken", Retsuban_Head.Size),
+                    _ => RetsubanImageLoader.Load("16dot_Null", Retsuban_Head.Size),
                 };
 
                 // 4~1領域 - 数字部分を右寄せで各桁に描画
                 string digits = match.Groups[2].Value.PadLeft(4, ' '); // 数字を4桁に右寄せ、空白で埋める
                 for (int i = 0; i < 4; i++)
                 {
-                    Retsuban_7seg[i].Image = Images_7seg[$"{digits[i]}"];
+                    // determine base name for digit (space maps to 7seg_N)
+                    var key = digits[i].ToString();
+                    if (key == " ")
+                    {
+                        Retsuban_7seg[i].Image = RetsubanImageLoader.Load(Images_7seg[" "], Retsuban_7seg[i].Size);
+                    }
+                    else
+                    {
+                        if (Images_7seg.TryGetValue(key, out var baseName))
+                        {
+                            Retsuban_7seg[i].Image = RetsubanImageLoader.Load(baseName, Retsuban_7seg[i].Size);
+                        }
+                        else
+                        {
+                            Retsuban_7seg[i].Image = RetsubanImageLoader.Load("7seg_N", Retsuban_7seg[i].Size);
+                        }
+                    }
                 }
 
 
-                // Tail領域 - A,B,C,K,X,AX,BX,CX,KXのいずれか
+                // Tail領域 - [TS]?[ABCDK]?[XYZ]?
                 string tail = match.Groups[3].Value;
                 // Tailに画像を描画
                 // 描画処理: tail画像をTail領域に配置
@@ -120,26 +143,8 @@ namespace TatehamaATS_v1.RetsubanWindow
                 // 圧縮表記でTail領域描画
                 Retsuban_Tail.Image = tail switch
                 {
-                    "A" => RetsubanResource._16dot_A,
-                    "B" => RetsubanResource._16dot_B,
-                    "C" => RetsubanResource._16dot_C,
-                    "K" => RetsubanResource._16dot_K,
-                    "X" => RetsubanResource._16dot_X,
-                    "Y" => RetsubanResource._16dot_Y,
-                    "Z" => RetsubanResource._16dot_Z,
-                    "AX" => RetsubanResource._16dot_AX,
-                    "BX" => RetsubanResource._16dot_BX,
-                    "CX" => RetsubanResource._16dot_CX,
-                    "KX" => RetsubanResource._16dot_KX,
-                    "AY" => RetsubanResource._16dot_AY,
-                    "BY" => RetsubanResource._16dot_BY,
-                    "CY" => RetsubanResource._16dot_CY,
-                    "KY" => RetsubanResource._16dot_KY,
-                    "AZ" => RetsubanResource._16dot_AZ,
-                    "BZ" => RetsubanResource._16dot_BZ,
-                    "CZ" => RetsubanResource._16dot_CZ,
-                    "KZ" => RetsubanResource._16dot_KZ,
-                    _ => RetsubanResource._16dot_Null,
+                    "" => RetsubanImageLoader.Load("16dot_Null", Retsuban_Tail.Size),
+                    _ => RetsubanImageLoader.Load("16dot_" + tail, Retsuban_Tail.Size),
                 };
             }
         }
@@ -155,15 +160,18 @@ namespace TatehamaATS_v1.RetsubanWindow
             car = car.PadLeft(2, ' ');
             if (car == " 0")
             {
-                Car_2.BackgroundImage = Images_7seg[$" "];
-                Car_1.BackgroundImage = Images_7seg[$" "];
+                Car_2.BackgroundImage = RetsubanImageLoader.Load(Images_7seg[" "], Car_2.Size);
+                Car_1.BackgroundImage = RetsubanImageLoader.Load(Images_7seg[" "], Car_1.Size);
             }
             else
             {
-                Car_2.BackgroundImage = Images_7seg[$"{car[0]}"];
-                Car_1.BackgroundImage = Images_7seg[$"{car[1]}"];
+                var key0 = car[0].ToString();
+                var key1 = car[1].ToString();
+                Car_2.BackgroundImage = RetsubanImageLoader.Load(Images_7seg.ContainsKey(key0) ? Images_7seg[key0] : "7seg_N", Car_2.Size);
+                Car_1.BackgroundImage = RetsubanImageLoader.Load(Images_7seg.ContainsKey(key1) ? Images_7seg[key1] : "7seg_N", Car_1.Size);
             }
         }
+
 
         internal void Buttons_Digit(string Digit)
         {
@@ -175,7 +183,7 @@ namespace TatehamaATS_v1.RetsubanWindow
             if (nowRetsuSetting)
             {
                 // 正規表現パターンの定義
-                var pattern = @"^([回試臨]?)([0-9]{1,4})$";
+                var pattern = @"^(回|臨|臨回|検|試)?([0-9]{1,4})$";
                 if (Regex.IsMatch(NewRetsuban + Digit, pattern))
                 {
                     NewRetsuban += Digit;
@@ -208,7 +216,7 @@ namespace TatehamaATS_v1.RetsubanWindow
             {
                 return;
             }
-            if (NewRetsuban == "")
+            if (NewRetsuban == "" || (NewRetsuban == "臨" && Name == "回"))
             {
                 NewRetsuban += Name;
                 RetsubanDrawing();
@@ -223,7 +231,7 @@ namespace TatehamaATS_v1.RetsubanWindow
             {
                 return;
             }
-            var pattern = @"^(回|試|臨)?([0-9]{3,4})$";
+            var pattern = @"^(回|臨|臨回|検|試)?([0-9]{3,4})([TS]?)$";
             // 正規表現パターンの定義
             if (Regex.IsMatch(NewRetsuban, pattern))
             {
@@ -240,7 +248,7 @@ namespace TatehamaATS_v1.RetsubanWindow
             {
                 return;
             }
-            var pattern = @"^(回|試|臨)?([0-9]{3,4})$";
+            var pattern = @"^(回|臨|臨回|検|試)?([0-9]{3,4})$";
             // 正規表現パターンの定義
             if (Regex.IsMatch(NewRetsuban, pattern))
             {
@@ -257,7 +265,7 @@ namespace TatehamaATS_v1.RetsubanWindow
             {
                 return;
             }
-            var pattern = @"^(回|試|臨)?([0-9]{3,4})(A|B|C|K)?$";
+            var pattern = @"^(回|臨|臨回|検|試)?([0-9]{3,4})([TS]?[ABCDK]?)?$";
             // 正規表現パターンの定義
             if (Regex.IsMatch(NewRetsuban, pattern))
             {
@@ -274,7 +282,7 @@ namespace TatehamaATS_v1.RetsubanWindow
                 case "Set":
                     if (nowRetsuSetting)
                     {
-                        var pattern = @"^(回|試|臨)?([0-9]{3,4})(A|B|C|K|X|Y|Z|AX|BX|CX|KX|AY|BY|CY|KY|AZ|BZ|CZ|KZ)?$";
+                        var pattern = @"^(回|臨|臨回|検|試)?([0-9]{3,4})([TS]?[ABCDK]?[XYZ]?)?$";
                         // 正規表現パターンの定義
                         if (Regex.IsMatch(NewRetsuban, pattern))
                         {

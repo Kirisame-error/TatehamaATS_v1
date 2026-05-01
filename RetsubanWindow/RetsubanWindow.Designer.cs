@@ -26,7 +26,8 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent() {
+        private void InitializeComponent()
+        {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RetsubanWindow));
             Retsuban_4 = new PictureBox();
@@ -143,7 +144,7 @@
             // Retsuban_4
             // 
             Retsuban_4.BackColor = Color.Transparent;
-            Retsuban_4.BackgroundImage = RetsubanResource._7seg_N;
+            Retsuban_4.BackgroundImage = (Image)resources.GetObject("Retsuban_4.BackgroundImage");
             Retsuban_4.BackgroundImageLayout = ImageLayout.None;
             Retsuban_4.Location = new Point(96, 101);
             Retsuban_4.Name = "Retsuban_4";
@@ -154,7 +155,7 @@
             // Retsuban_3
             // 
             Retsuban_3.BackColor = Color.Transparent;
-            Retsuban_3.BackgroundImage = RetsubanResource._7seg_N;
+            Retsuban_3.BackgroundImage = (Image)resources.GetObject("Retsuban_3.BackgroundImage");
             Retsuban_3.BackgroundImageLayout = ImageLayout.None;
             Retsuban_3.Location = new Point(146, 101);
             Retsuban_3.Name = "Retsuban_3";
@@ -165,7 +166,7 @@
             // Retsuban_2
             // 
             Retsuban_2.BackColor = Color.Transparent;
-            Retsuban_2.BackgroundImage = RetsubanResource._7seg_N;
+            Retsuban_2.BackgroundImage = (Image)resources.GetObject("Retsuban_2.BackgroundImage");
             Retsuban_2.BackgroundImageLayout = ImageLayout.None;
             Retsuban_2.Location = new Point(196, 101);
             Retsuban_2.Name = "Retsuban_2";
@@ -176,7 +177,7 @@
             // Retsuban_1
             // 
             Retsuban_1.BackColor = Color.Transparent;
-            Retsuban_1.BackgroundImage = RetsubanResource._7seg_N;
+            Retsuban_1.BackgroundImage = (Image)resources.GetObject("Retsuban_1.BackgroundImage");
             Retsuban_1.BackgroundImageLayout = ImageLayout.None;
             Retsuban_1.Location = new Point(246, 101);
             Retsuban_1.Name = "Retsuban_1";
@@ -187,7 +188,7 @@
             // Time_h2
             // 
             Time_h2.BackColor = Color.Transparent;
-            Time_h2.BackgroundImage = RetsubanResource._7seg_N;
+            Time_h2.BackgroundImage = (Image)resources.GetObject("Time_h2.BackgroundImage");
             Time_h2.BackgroundImageLayout = ImageLayout.None;
             Time_h2.Location = new Point(26, 206);
             Time_h2.Name = "Time_h2";
@@ -198,7 +199,7 @@
             // Time_h1
             // 
             Time_h1.BackColor = Color.Transparent;
-            Time_h1.BackgroundImage = RetsubanResource._7seg_N;
+            Time_h1.BackgroundImage = (Image)resources.GetObject("Time_h1.BackgroundImage");
             Time_h1.BackgroundImageLayout = ImageLayout.None;
             Time_h1.Location = new Point(77, 206);
             Time_h1.Name = "Time_h1";
@@ -209,7 +210,7 @@
             // Time_m2
             // 
             Time_m2.BackColor = Color.Transparent;
-            Time_m2.BackgroundImage = RetsubanResource._7seg_N;
+            Time_m2.BackgroundImage = (Image)resources.GetObject("Time_m2.BackgroundImage");
             Time_m2.BackgroundImageLayout = ImageLayout.None;
             Time_m2.Location = new Point(146, 206);
             Time_m2.Name = "Time_m2";
@@ -220,7 +221,7 @@
             // Time_m1
             // 
             Time_m1.BackColor = Color.Transparent;
-            Time_m1.BackgroundImage = RetsubanResource._7seg_N;
+            Time_m1.BackgroundImage = (Image)resources.GetObject("Time_m1.BackgroundImage");
             Time_m1.BackgroundImageLayout = ImageLayout.None;
             Time_m1.Location = new Point(196, 206);
             Time_m1.Name = "Time_m1";
@@ -231,7 +232,7 @@
             // Car_2
             // 
             Car_2.BackColor = Color.Transparent;
-            Car_2.BackgroundImage = RetsubanResource._7seg_N;
+            Car_2.BackgroundImage = (Image)resources.GetObject("Car_2.BackgroundImage");
             Car_2.BackgroundImageLayout = ImageLayout.None;
             Car_2.Location = new Point(431, 101);
             Car_2.Name = "Car_2";
@@ -242,7 +243,7 @@
             // Car_1
             // 
             Car_1.BackColor = Color.Transparent;
-            Car_1.BackgroundImage = RetsubanResource._7seg_N;
+            Car_1.BackgroundImage = (Image)resources.GetObject("Car_1.BackgroundImage");
             Car_1.BackgroundImageLayout = ImageLayout.None;
             Car_1.Location = new Point(481, 101);
             Car_1.Name = "Car_1";
@@ -253,7 +254,7 @@
             // Time_s2
             // 
             Time_s2.BackColor = Color.Transparent;
-            Time_s2.BackgroundImage = RetsubanResource._7seg_N;
+            Time_s2.BackgroundImage = (Image)resources.GetObject("Time_s2.BackgroundImage");
             Time_s2.BackgroundImageLayout = ImageLayout.None;
             Time_s2.Location = new Point(266, 206);
             Time_s2.Name = "Time_s2";
@@ -264,7 +265,7 @@
             // Retsuban_Head
             // 
             Retsuban_Head.BackColor = Color.Transparent;
-            Retsuban_Head.BackgroundImage = RetsubanResource._16dot_Null;
+            Retsuban_Head.BackgroundImage = (Image)resources.GetObject("Retsuban_Head.BackgroundImage");
             Retsuban_Head.BackgroundImageLayout = ImageLayout.None;
             Retsuban_Head.Location = new Point(26, 101);
             Retsuban_Head.Name = "Retsuban_Head";
@@ -275,7 +276,7 @@
             // Retsuban_Tail
             // 
             Retsuban_Tail.BackColor = Color.Transparent;
-            Retsuban_Tail.BackgroundImage = RetsubanResource._16dot_Null;
+            Retsuban_Tail.BackgroundImage = (Image)resources.GetObject("Retsuban_Tail.BackgroundImage");
             Retsuban_Tail.BackgroundImageLayout = ImageLayout.None;
             Retsuban_Tail.Location = new Point(296, 101);
             Retsuban_Tail.Name = "Retsuban_Tail";
@@ -286,7 +287,7 @@
             // Button_0
             // 
             Button_0.BackColor = Color.Transparent;
-            Button_0.BackgroundImage = RetsubanResource.Button_0;
+            Button_0.BackgroundImage = (Image)resources.GetObject("Button_0.BackgroundImage");
             Button_0.BackgroundImageLayout = ImageLayout.None;
             Button_0.Location = new Point(520, 345);
             Button_0.Name = "Button_0";
@@ -298,7 +299,7 @@
             // Button_4
             // 
             Button_4.BackColor = Color.Transparent;
-            Button_4.BackgroundImage = RetsubanResource.Button_4;
+            Button_4.BackgroundImage = (Image)resources.GetObject("Button_4.BackgroundImage");
             Button_4.BackgroundImageLayout = ImageLayout.None;
             Button_4.Location = new Point(520, 275);
             Button_4.Name = "Button_4";
@@ -310,7 +311,7 @@
             // Button_5
             // 
             Button_5.BackColor = Color.Transparent;
-            Button_5.BackgroundImage = RetsubanResource.Button_5;
+            Button_5.BackgroundImage = (Image)resources.GetObject("Button_5.BackgroundImage");
             Button_5.BackgroundImageLayout = ImageLayout.None;
             Button_5.Location = new Point(555, 275);
             Button_5.Name = "Button_5";
@@ -322,7 +323,7 @@
             // Button_6
             // 
             Button_6.BackColor = Color.Transparent;
-            Button_6.BackgroundImage = RetsubanResource.Button_6;
+            Button_6.BackgroundImage = (Image)resources.GetObject("Button_6.BackgroundImage");
             Button_6.BackgroundImageLayout = ImageLayout.None;
             Button_6.Location = new Point(590, 275);
             Button_6.Name = "Button_6";
@@ -334,7 +335,7 @@
             // Button_1
             // 
             Button_1.BackColor = Color.Transparent;
-            Button_1.BackgroundImage = RetsubanResource.Button_1;
+            Button_1.BackgroundImage = (Image)resources.GetObject("Button_1.BackgroundImage");
             Button_1.BackgroundImageLayout = ImageLayout.None;
             Button_1.Location = new Point(520, 310);
             Button_1.Name = "Button_1";
@@ -346,7 +347,7 @@
             // Button_2
             // 
             Button_2.BackColor = Color.Transparent;
-            Button_2.BackgroundImage = RetsubanResource.Button_2;
+            Button_2.BackgroundImage = (Image)resources.GetObject("Button_2.BackgroundImage");
             Button_2.BackgroundImageLayout = ImageLayout.None;
             Button_2.Location = new Point(555, 310);
             Button_2.Name = "Button_2";
@@ -358,7 +359,7 @@
             // Button_3
             // 
             Button_3.BackColor = Color.Transparent;
-            Button_3.BackgroundImage = RetsubanResource.Button_3;
+            Button_3.BackgroundImage = (Image)resources.GetObject("Button_3.BackgroundImage");
             Button_3.BackgroundImageLayout = ImageLayout.None;
             Button_3.Location = new Point(590, 310);
             Button_3.Name = "Button_3";
@@ -370,7 +371,7 @@
             // Button_7
             // 
             Button_7.BackColor = Color.Transparent;
-            Button_7.BackgroundImage = RetsubanResource.Button_7;
+            Button_7.BackgroundImage = (Image)resources.GetObject("Button_7.BackgroundImage");
             Button_7.BackgroundImageLayout = ImageLayout.None;
             Button_7.Location = new Point(520, 240);
             Button_7.Name = "Button_7";
@@ -382,7 +383,7 @@
             // Button_8
             // 
             Button_8.BackColor = Color.Transparent;
-            Button_8.BackgroundImage = RetsubanResource.Button_8;
+            Button_8.BackgroundImage = (Image)resources.GetObject("Button_8.BackgroundImage");
             Button_8.BackgroundImageLayout = ImageLayout.None;
             Button_8.Location = new Point(555, 240);
             Button_8.Name = "Button_8";
@@ -394,7 +395,7 @@
             // Button_9
             // 
             Button_9.BackColor = Color.Transparent;
-            Button_9.BackgroundImage = RetsubanResource.Button_9;
+            Button_9.BackgroundImage = (Image)resources.GetObject("Button_9.BackgroundImage");
             Button_9.BackgroundImageLayout = ImageLayout.None;
             Button_9.Location = new Point(590, 240);
             Button_9.Name = "Button_9";
@@ -406,19 +407,20 @@
             // Button_Kai
             // 
             Button_Kai.BackColor = Color.Transparent;
-            Button_Kai.BackgroundImage = RetsubanResource.Button_Kai;
+            Button_Kai.BackgroundImage = (Image)resources.GetObject("Button_Kai.BackgroundImage");
             Button_Kai.BackgroundImageLayout = ImageLayout.None;
             Button_Kai.Location = new Point(520, 205);
             Button_Kai.Name = "Button_Kai";
             Button_Kai.Size = new Size(30, 30);
             Button_Kai.TabIndex = 12;
             Button_Kai.TabStop = false;
+            Button_Kai.Click += Button_Kai_Click_1;
             Button_Kai.MouseDown += Button_Kai_Click;
             // 
             // Button_Shi
             // 
             Button_Shi.BackColor = Color.Transparent;
-            Button_Shi.BackgroundImage = RetsubanResource.Button_Shi;
+            Button_Shi.BackgroundImage = (Image)resources.GetObject("Button_Shi.BackgroundImage");
             Button_Shi.BackgroundImageLayout = ImageLayout.None;
             Button_Shi.Location = new Point(555, 205);
             Button_Shi.Name = "Button_Shi";
@@ -430,9 +432,9 @@
             // Button_Rin
             // 
             Button_Rin.BackColor = Color.Transparent;
-            Button_Rin.BackgroundImage = RetsubanResource.Button_Rin;
+            Button_Rin.BackgroundImage = (Image)resources.GetObject("Button_Rin.BackgroundImage");
             Button_Rin.BackgroundImageLayout = ImageLayout.None;
-            Button_Rin.Location = new Point(590, 205);
+            Button_Rin.Location = new Point(485, 205);
             Button_Rin.Name = "Button_Rin";
             Button_Rin.Size = new Size(30, 30);
             Button_Rin.TabIndex = 12;
@@ -442,7 +444,7 @@
             // Button_Del
             // 
             Button_Del.BackColor = Color.Transparent;
-            Button_Del.BackgroundImage = RetsubanResource.Button_Del;
+            Button_Del.BackgroundImage = (Image)resources.GetObject("Button_Del.BackgroundImage");
             Button_Del.BackgroundImageLayout = ImageLayout.None;
             Button_Del.Location = new Point(555, 380);
             Button_Del.Name = "Button_Del";
@@ -454,7 +456,7 @@
             // Button_Set
             // 
             Button_Set.BackColor = Color.Transparent;
-            Button_Set.BackgroundImage = RetsubanResource.Button_Set;
+            Button_Set.BackgroundImage = (Image)resources.GetObject("Button_Set.BackgroundImage");
             Button_Set.BackgroundImageLayout = ImageLayout.None;
             Button_Set.Location = new Point(520, 380);
             Button_Set.Name = "Button_Set";
@@ -466,7 +468,7 @@
             // Button_RetsuSet
             // 
             Button_RetsuSet.BackColor = Color.Transparent;
-            Button_RetsuSet.BackgroundImage = RetsubanResource.Button_RetsuSet;
+            Button_RetsuSet.BackgroundImage = (Image)resources.GetObject("Button_RetsuSet.BackgroundImage");
             Button_RetsuSet.BackgroundImageLayout = ImageLayout.None;
             Button_RetsuSet.Location = new Point(415, 205);
             Button_RetsuSet.Name = "Button_RetsuSet";
@@ -478,9 +480,9 @@
             // Button_X
             // 
             Button_X.BackColor = Color.Transparent;
-            Button_X.BackgroundImage = RetsubanResource.Button_X;
+            Button_X.BackgroundImage = (Image)resources.GetObject("Button_X.BackgroundImage");
             Button_X.BackgroundImageLayout = ImageLayout.None;
-            Button_X.Location = new Point(450, 275);
+            Button_X.Location = new Point(450, 310);
             Button_X.Name = "Button_X";
             Button_X.Size = new Size(30, 30);
             Button_X.TabIndex = 12;
@@ -490,7 +492,7 @@
             // Button_VerDisplay
             // 
             Button_VerDisplay.BackColor = Color.Transparent;
-            Button_VerDisplay.BackgroundImage = RetsubanResource.Button_VerDisplay;
+            Button_VerDisplay.BackgroundImage = (Image)resources.GetObject("Button_VerDisplay.BackgroundImage");
             Button_VerDisplay.BackgroundImageLayout = ImageLayout.None;
             Button_VerDisplay.Location = new Point(415, 380);
             Button_VerDisplay.Name = "Button_VerDisplay";
@@ -502,7 +504,7 @@
             // Button_TimeSet
             // 
             Button_TimeSet.BackColor = Color.Transparent;
-            Button_TimeSet.BackgroundImage = RetsubanResource.Button_TimeSet;
+            Button_TimeSet.BackgroundImage = (Image)resources.GetObject("Button_TimeSet.BackgroundImage");
             Button_TimeSet.BackgroundImageLayout = ImageLayout.None;
             Button_TimeSet.Location = new Point(415, 275);
             Button_TimeSet.Name = "Button_TimeSet";
@@ -514,7 +516,7 @@
             // Button_UnkoSet
             // 
             Button_UnkoSet.BackColor = Color.Transparent;
-            Button_UnkoSet.BackgroundImage = RetsubanResource.Button_UnkoSet;
+            Button_UnkoSet.BackgroundImage = (Image)resources.GetObject("Button_UnkoSet.BackgroundImage");
             Button_UnkoSet.BackgroundImageLayout = ImageLayout.None;
             Button_UnkoSet.Location = new Point(415, 310);
             Button_UnkoSet.Name = "Button_UnkoSet";
@@ -526,7 +528,7 @@
             // Button_CarSet
             // 
             Button_CarSet.BackColor = Color.Transparent;
-            Button_CarSet.BackgroundImage = RetsubanResource.Button_CarSet;
+            Button_CarSet.BackgroundImage = (Image)resources.GetObject("Button_CarSet.BackgroundImage");
             Button_CarSet.BackgroundImageLayout = ImageLayout.None;
             Button_CarSet.Location = new Point(415, 240);
             Button_CarSet.Name = "Button_CarSet";
@@ -538,9 +540,9 @@
             // Button_C
             // 
             Button_C.BackColor = Color.Transparent;
-            Button_C.BackgroundImage = RetsubanResource.Button_C;
+            Button_C.BackgroundImage = (Image)resources.GetObject("Button_C.BackgroundImage");
             Button_C.BackgroundImageLayout = ImageLayout.None;
-            Button_C.Location = new Point(485, 275);
+            Button_C.Location = new Point(485, 310);
             Button_C.Name = "Button_C";
             Button_C.Size = new Size(30, 30);
             Button_C.TabIndex = 12;
@@ -550,9 +552,9 @@
             // Button_K
             // 
             Button_K.BackColor = Color.Transparent;
-            Button_K.BackgroundImage = RetsubanResource.Button_K;
+            Button_K.BackgroundImage = (Image)resources.GetObject("Button_K.BackgroundImage");
             Button_K.BackgroundImageLayout = ImageLayout.None;
-            Button_K.Location = new Point(485, 345);
+            Button_K.Location = new Point(485, 380);
             Button_K.Name = "Button_K";
             Button_K.Size = new Size(30, 30);
             Button_K.TabIndex = 12;
@@ -562,9 +564,9 @@
             // Button_B
             // 
             Button_B.BackColor = Color.Transparent;
-            Button_B.BackgroundImage = RetsubanResource.Button_B;
+            Button_B.BackgroundImage = (Image)resources.GetObject("Button_B.BackgroundImage");
             Button_B.BackgroundImageLayout = ImageLayout.None;
-            Button_B.Location = new Point(485, 240);
+            Button_B.Location = new Point(485, 275);
             Button_B.Name = "Button_B";
             Button_B.Size = new Size(30, 30);
             Button_B.TabIndex = 12;
@@ -574,9 +576,9 @@
             // Button_A
             // 
             Button_A.BackColor = Color.Transparent;
-            Button_A.BackgroundImage = RetsubanResource.Button_A;
+            Button_A.BackgroundImage = (Image)resources.GetObject("Button_A.BackgroundImage");
             Button_A.BackgroundImageLayout = ImageLayout.None;
-            Button_A.Location = new Point(485, 205);
+            Button_A.Location = new Point(485, 240);
             Button_A.Name = "Button_A";
             Button_A.Size = new Size(30, 30);
             Button_A.TabIndex = 12;
@@ -586,7 +588,7 @@
             // Lamp_Retsuban
             // 
             Lamp_Retsuban.BackColor = Color.Transparent;
-            Lamp_Retsuban.BackgroundImage = RetsubanResource.Lamp;
+            Lamp_Retsuban.BackgroundImage = (Image)resources.GetObject("Lamp_Retsuban.BackgroundImage");
             Lamp_Retsuban.BackgroundImageLayout = ImageLayout.None;
             Lamp_Retsuban.Location = new Point(372, 152);
             Lamp_Retsuban.Name = "Lamp_Retsuban";
@@ -598,7 +600,7 @@
             // Lamp_Time
             // 
             Lamp_Time.BackColor = Color.Transparent;
-            Lamp_Time.BackgroundImage = RetsubanResource.Lamp;
+            Lamp_Time.BackgroundImage = (Image)resources.GetObject("Lamp_Time.BackgroundImage");
             Lamp_Time.BackgroundImageLayout = ImageLayout.None;
             Lamp_Time.Location = new Point(372, 258);
             Lamp_Time.Name = "Lamp_Time";
@@ -610,7 +612,7 @@
             // Lamp_Car
             // 
             Lamp_Car.BackColor = Color.Transparent;
-            Lamp_Car.BackgroundImage = RetsubanResource.Lamp;
+            Lamp_Car.BackgroundImage = (Image)resources.GetObject("Lamp_Car.BackgroundImage");
             Lamp_Car.BackgroundImageLayout = ImageLayout.None;
             Lamp_Car.Location = new Point(607, 153);
             Lamp_Car.Name = "Lamp_Car";
@@ -622,7 +624,7 @@
             // Time_s1
             // 
             Time_s1.BackColor = Color.Transparent;
-            Time_s1.BackgroundImage = RetsubanResource._7seg_N;
+            Time_s1.BackgroundImage = (Image)resources.GetObject("Time_s1.BackgroundImage");
             Time_s1.BackgroundImageLayout = ImageLayout.None;
             Time_s1.Location = new Point(316, 206);
             Time_s1.Name = "Time_s1";
@@ -639,9 +641,9 @@
             // Button_Y
             // 
             Button_Y.BackColor = Color.Transparent;
-            Button_Y.BackgroundImage = RetsubanResource.Button_Y;
+            Button_Y.BackgroundImage = (Image)resources.GetObject("Button_Y.BackgroundImage");
             Button_Y.BackgroundImageLayout = ImageLayout.None;
-            Button_Y.Location = new Point(450, 310);
+            Button_Y.Location = new Point(450, 345);
             Button_Y.Name = "Button_Y";
             Button_Y.Size = new Size(30, 30);
             Button_Y.TabIndex = 12;
@@ -651,9 +653,9 @@
             // Button_Z
             // 
             Button_Z.BackColor = Color.Transparent;
-            Button_Z.BackgroundImage = RetsubanResource.Button_Z;
+            Button_Z.BackgroundImage = (Image)resources.GetObject("Button_Z.BackgroundImage");
             Button_Z.BackgroundImageLayout = ImageLayout.None;
-            Button_Z.Location = new Point(450, 345);
+            Button_Z.Location = new Point(450, 380);
             Button_Z.Name = "Button_Z";
             Button_Z.Size = new Size(30, 30);
             Button_Z.TabIndex = 12;
@@ -663,7 +665,7 @@
             // LCD
             // 
             LCD.BackColor = Color.Transparent;
-            LCD.BackgroundImage = RetsubanResource.LCD_Waku;
+            LCD.BackgroundImage = (Image)resources.GetObject("LCD.BackgroundImage");
             LCD.BackgroundImageLayout = ImageLayout.None;
             LCD.Image = RetsubanResource.LCD_Waku;
             LCD.Location = new Point(20, 307);
@@ -675,7 +677,7 @@
             // Button_StopSet
             // 
             Button_StopSet.BackColor = Color.Transparent;
-            Button_StopSet.BackgroundImage = RetsubanResource.Button_StopSet;
+            Button_StopSet.BackgroundImage = (Image)resources.GetObject("Button_StopSet.BackgroundImage");
             Button_StopSet.BackgroundImageLayout = ImageLayout.None;
             Button_StopSet.Location = new Point(415, 345);
             Button_StopSet.Name = "Button_StopSet";
@@ -687,7 +689,7 @@
             // Button_Clear
             // 
             Button_Clear.BackColor = Color.Transparent;
-            Button_Clear.BackgroundImage = RetsubanResource.Button_Clear;
+            Button_Clear.BackgroundImage = (Image)resources.GetObject("Button_Clear.BackgroundImage");
             Button_Clear.BackgroundImageLayout = ImageLayout.None;
             Button_Clear.Location = new Point(590, 380);
             Button_Clear.Name = "Button_Clear";
@@ -699,7 +701,7 @@
             // Button_Tei
             // 
             Button_Tei.BackColor = Color.Transparent;
-            Button_Tei.BackgroundImage = RetsubanResource.Button_Tei;
+            Button_Tei.BackgroundImage = (Image)resources.GetObject("Button_Tei.BackgroundImage");
             Button_Tei.BackgroundImageLayout = ImageLayout.None;
             Button_Tei.Location = new Point(555, 345);
             Button_Tei.Name = "Button_Tei";
@@ -711,7 +713,7 @@
             // Button_Tsu
             // 
             Button_Tsu.BackColor = Color.Transparent;
-            Button_Tsu.BackgroundImage = RetsubanResource.Button_Tsu;
+            Button_Tsu.BackgroundImage = (Image)resources.GetObject("Button_Tsu.BackgroundImage");
             Button_Tsu.BackgroundImageLayout = ImageLayout.None;
             Button_Tsu.Location = new Point(590, 345);
             Button_Tsu.Name = "Button_Tsu";
@@ -723,9 +725,8 @@
             // Button_Toku
             // 
             Button_Toku.BackColor = Color.Transparent;
-            Button_Toku.BackgroundImage = RetsubanResource.Button_Toku;
             Button_Toku.BackgroundImageLayout = ImageLayout.None;
-            Button_Toku.Location = new Point(485, 380);
+            Button_Toku.Location = new Point(590, 205);
             Button_Toku.Name = "Button_Toku";
             Button_Toku.Size = new Size(30, 30);
             Button_Toku.TabIndex = 21;
@@ -735,9 +736,9 @@
             // Button_Danjiri
             // 
             Button_Danjiri.BackColor = Color.Transparent;
-            Button_Danjiri.BackgroundImage = RetsubanResource.Button_Danjiri;
+            Button_Danjiri.BackgroundImage = (Image)resources.GetObject("Button_Danjiri.BackgroundImage");
             Button_Danjiri.BackgroundImageLayout = ImageLayout.None;
-            Button_Danjiri.Location = new Point(450, 380);
+            Button_Danjiri.Location = new Point(450, 205);
             Button_Danjiri.Name = "Button_Danjiri";
             Button_Danjiri.Size = new Size(30, 30);
             Button_Danjiri.TabIndex = 22;
@@ -747,9 +748,9 @@
             // Button_T
             // 
             Button_T.BackColor = Color.Transparent;
-            Button_T.BackgroundImage = RetsubanResource.Button_T;
+            Button_T.BackgroundImage = (Image)resources.GetObject("Button_T.BackgroundImage");
             Button_T.BackgroundImageLayout = ImageLayout.None;
-            Button_T.Location = new Point(450, 240);
+            Button_T.Location = new Point(450, 275);
             Button_T.Name = "Button_T";
             Button_T.Size = new Size(30, 30);
             Button_T.TabIndex = 23;
@@ -759,9 +760,9 @@
             // Button_S
             // 
             Button_S.BackColor = Color.Transparent;
-            Button_S.BackgroundImage = RetsubanResource.Button_S;
+            Button_S.BackgroundImage = (Image)resources.GetObject("Button_S.BackgroundImage");
             Button_S.BackgroundImageLayout = ImageLayout.None;
-            Button_S.Location = new Point(450, 205);
+            Button_S.Location = new Point(450, 240);
             Button_S.Name = "Button_S";
             Button_S.Size = new Size(30, 30);
             Button_S.TabIndex = 24;
@@ -771,9 +772,9 @@
             // Button_D
             // 
             Button_D.BackColor = Color.Transparent;
-            Button_D.BackgroundImage = RetsubanResource.Button_D;
+            Button_D.BackgroundImage = (Image)resources.GetObject("Button_D.BackgroundImage");
             Button_D.BackgroundImageLayout = ImageLayout.None;
-            Button_D.Location = new Point(485, 310);
+            Button_D.Location = new Point(485, 345);
             Button_D.Name = "Button_D";
             Button_D.Size = new Size(30, 30);
             Button_D.TabIndex = 25;

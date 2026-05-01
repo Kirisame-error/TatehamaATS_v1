@@ -154,6 +154,16 @@ namespace TatehamaATS_v1.OnboardDevice
                 TypeName = "準急";
                 return;
             }
+            if (Retsuban.Contains("D"))
+            {
+                if (Retsuban.StartsWith("臨"))
+                {
+                    TypeName = "臨時区間急行";
+                    return;
+                }
+                TypeName = "区間急行";
+                return;
+            }
             if (Retsuban.StartsWith("臨"))
             {
                 TypeName = "臨時";
@@ -352,7 +362,21 @@ namespace TatehamaATS_v1.OnboardDevice
                 return;
             }
             // 区急通過駅
-            //東井  
+
+            //館浜     
+            //駒野
+            //
+            //河原崎
+            //　通過済み
+            //津崎
+
+            if (Head != "だんじり")
+                SetStopDataById("TH70", "通過");  //浜園      
+            //羽衣橋
+            //　通過済み
+            //新井川
+
+            //新野崎  
             //　各駅に停車
             //六日市町       
             SetStopDataById("TH38", "通過");  //朝日ヶ丘
@@ -364,7 +388,7 @@ namespace TatehamaATS_v1.OnboardDevice
             SetStopDataById("TH32", "通過");  //木之本
             //新長野公園
             //　以降準急と同じ
-            if (Main == "区急")
+            if (Main == "区間急行")
             {
                 // 区急停車駅までで抜ける
                 return;
@@ -373,13 +397,7 @@ namespace TatehamaATS_v1.OnboardDevice
             //館浜
             SetStopDataById("TH75", "通過");  //駒野     
             //河原崎
-            //　通過済み
-            //津崎
-
-            if (Head != "だんじり")
-                SetStopDataById("TH70", "通過");  //浜園
-            //羽衣橋
-            //　準急と同じ
+            //　区間急行と同じ
             //大路
             SetStopDataById("TH44", "通過");  //常盤通
             SetStopDataById("TH43", "通過");
