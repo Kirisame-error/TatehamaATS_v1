@@ -150,6 +150,7 @@ namespace TatehamaATS_v1.RetsubanWindow
                     break;
                 case ButtonType.RetsuTailCompany:
                     retsubanLogic.Buttons_RetsuTailCompany(Name);
+                    LCDLogic.Buttons_RetsuTailOther(Name);
                     break;
                 case ButtonType.RetsuTailOther:
                     retsubanLogic.Buttons_RetsuTailOther(Name);
