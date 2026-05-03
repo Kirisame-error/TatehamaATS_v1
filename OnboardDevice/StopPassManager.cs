@@ -223,6 +223,9 @@ namespace TatehamaATS_v1.OnboardDevice
                 case "特急":
                     TypeNameTC = "D特";
                     break;
+                case "区間急行":
+                    TypeNameTC = "区急";
+                    break;
                 default:
                     TypeNameTC = ""; // その他のケースはそのまま
                     break;
