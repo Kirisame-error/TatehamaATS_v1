@@ -150,6 +150,7 @@ namespace TatehamaATS_v1.RetsubanWindow
                     break;
                 case ButtonType.RetsuTailCompany:
                     retsubanLogic.Buttons_RetsuTailCompany(Name);
+                    LCDLogic.Buttons_RetsuTailOther(Name);
                     break;
                 case ButtonType.RetsuTailOther:
                     retsubanLogic.Buttons_RetsuTailOther(Name);
@@ -477,12 +478,23 @@ namespace TatehamaATS_v1.RetsubanWindow
         {
             foreach (var c in GetAllControls(this))
             {
-                if (c is PictureBox pb && !string.IsNullOrEmpty(pb.Name) && pb.Name.StartsWith("Button"))
+                if (c is PictureBox pb && !string.IsNullOrEmpty(pb.Name))
                 {
+                    string baseName = null;
+                    if (pb.Name.StartsWith("Button"))
+                    {
+                        baseName = pb.Name;
+                    }
+                    else if (pb.Name.StartsWith("Lamp"))
+                    {
+                        // Lamp_Retsuban / Lamp_Car / Lamp_Time は共通画像 Lamp.png を使用
+                        baseName = "Lamp";
+                    }
+                    if (baseName == null) continue;
                     try
                     {
                         // use control size so fallback creates correctly sized magenta image if file missing
-                        var img = RetsubanImageLoader.Load(pb.Name, pb.Size);
+                        var img = RetsubanImageLoader.Load(baseName, pb.Size);
                         pb.BackgroundImage = img;
                     }
                     catch

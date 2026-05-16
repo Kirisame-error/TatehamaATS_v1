@@ -91,4 +91,10 @@
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
 	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Image\Retsuban\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
 </Project>
