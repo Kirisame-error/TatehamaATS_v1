@@ -332,6 +332,7 @@ namespace TrainCrewAPI
         public bool HasDriverCab { get; set; } = false;
         public bool HasConductorCab { get; set; } = false;
         public bool HasMotor { get; set; } = false;
+        public float occupancyRate { get; set; }
     }
     [System.Serializable]
     public class StationInfo
