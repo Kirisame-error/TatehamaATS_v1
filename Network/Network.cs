@@ -608,7 +608,7 @@ namespace TatehamaATS_v1.Network
                     SendData.CarStates = TcData.myTrainData.CarStates;
                 }
 
-                TrainCrewInput.GetTrainState();
+                var state = TrainCrewInput.GetTrainState();
                 SendData.VisibleSignalNames = TrainCrewInput.signals != null
                     ? TrainCrewInput.signals.Select(s => s.name).ToList()
                     : [];
@@ -643,6 +643,13 @@ namespace TatehamaATS_v1.Network
 
                 SendData.Speed = TcData.myTrainData.Speed;
                 SendData.CarStates = TcData.myTrainData.CarStates;
+
+                var count = Math.Min(SendData.CarStates.Count, state.CarStates.Count);
+                for (var i = 0; i < count; i++)
+                {
+                    SendData.CarStates[i].occupancyRate = state.CarStates[i].occupancyRate;
+                }
+                
                 // まだない
                 SendData.Acceleration = 0.0f;
                 SendData.IsTherePreviousTrainIgnore = IsTherePreviousTrainIgnore;
