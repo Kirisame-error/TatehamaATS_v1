@@ -39,6 +39,11 @@ public partial class EnvironmentSelectForm : Form
 
         foreach (var env in availableEnvironments)
         {
+            // Todo: Localを公開してもよくなったら以下のContinueを消す
+            if (env.Type == EnvironmentType.Local)
+            {
+                continue;
+            }
             var radioButton = new RadioButton
             {
                 Text = env.DisplayName,  // URLではなく環境名のみ表示
