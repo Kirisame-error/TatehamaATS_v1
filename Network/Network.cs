@@ -4,13 +4,10 @@ using TrainCrew;
 
 namespace TatehamaATS_v1.Network
 {
-    using Microsoft.AspNetCore.SignalR.Client;
     using System;
     using System.Diagnostics;
     using System.Net;
-    using System.Net.Http.Headers;
     using System.Net.WebSockets;
-    using System.Text.RegularExpressions;
     using System.Threading;
     using TatehamaATS_v1.Exceptions;
     using TrainCrewAPI;
@@ -19,7 +16,8 @@ namespace TatehamaATS_v1.Network
     {
         private readonly TimeSpan _renewMargin = TimeSpan.FromMinutes(1);
         private readonly OpenIddictClientService _service;
-        private HubConnection? _connection;
+        private readonly IServerConnectionFactory _connectionFactory;
+        private IServerConnection? _connection;
 
         private static string _token = "";
         private string _refreshToken = "";
@@ -120,9 +118,24 @@ namespace TatehamaATS_v1.Network
         private bool connectErrorDialog = false;
         private bool previousDriveStatus;
 
+        /// <summary>
+        /// 現行のSignalR通信を使って通信部を初期化する。
+        /// </summary>
+        /// <param name="service">OpenIddictのクライアントサービス。</param>
         public Network(OpenIddictClientService service)
+            : this(service, new SignalRServerConnectionFactory(ServerAddress.SignalAddress))
+        {
+        }
+
+        /// <summary>
+        /// 通信実装を差し替え可能にして通信部を初期化する。
+        /// </summary>
+        /// <param name="service">OpenIddictのクライアントサービス。</param>
+        /// <param name="connectionFactory">ATSサーバー通信路の生成工場。</param>
+        internal Network(OpenIddictClientService service, IServerConnectionFactory connectionFactory)
         {
             _service = service;
+            _connectionFactory = connectionFactory;
             StartUpdateLoop();
             OverrideDiaName = "9999";
             OverrideDepStaID = "TH00";
@@ -342,7 +355,7 @@ namespace TatehamaATS_v1.Network
                     Debug.WriteLine($"Reconnect failed: {ex.Message}");
                 }
 
-                if (_connection != null && _connection.State == HubConnectionState.Connected)
+                if (_connection is { IsConnected: true })
                 {
                     Debug.WriteLine("Reconnected successfully.");
                     break;
@@ -475,9 +488,7 @@ namespace TatehamaATS_v1.Network
                 throw new InvalidOperationException("_connection is already initialized.");
             }
 
-            _connection = new HubConnectionBuilder()
-                .WithUrl($"{ServerAddress.SignalAddress}/hub/train?access_token={_token}")
-                .Build();
+            _connection = _connectionFactory.Create(_token);
             _eventHandlersSet = false;
         }
 
@@ -493,36 +504,35 @@ namespace TatehamaATS_v1.Network
                 return; // イベントハンドラは一度だけ設定する
             }
 
-            _connection.Closed += async (error) =>
-            {
-                Debug.WriteLine($"SignalR disconnected");
-                connected = false;
-                ConnectionStatusChanged?.Invoke(connected);
-                if (error == null)
-                {
-                    return;
-                }
-
-                Debug.WriteLine($"Error: {error.Message}");
-                // 接続が切れた場合、再接続を試みる
-                await TryReconnectAsync();
-            };
+            _connection.Closed += OnConnectionClosedAsync;
 
 
             // ReceiveDataイベントハンドラ
-            _connection.On<DataFromServerBySchedule>("ReceiveData", async (data) =>
-            {
-                await ReceiveData(data);
-            });
+            _connection.OnScheduleData(ReceiveData);
 
             // ReceiveSignalDataイベントハンドラ
-            _connection.On<List<SignalData>>("ReceiveSignalData", async (signalData) =>
-            {
-                await ReceiveSignalData(signalData);
-            });
+            _connection.OnSignalData(ReceiveSignalData);
             _eventHandlersSet = true;
         }
 
+        /// <summary>
+        /// 通信路の切断通知を受け、必要なら再接続処理を開始する。
+        /// </summary>
+        /// <param name="error">切断時の例外。正常終了の場合はnull。</param>
+        private async Task OnConnectionClosedAsync(Exception? error)
+        {
+            Debug.WriteLine("SignalR disconnected");
+            connected = false;
+            ConnectionStatusChanged?.Invoke(connected);
+            if (error == null)
+            {
+                return;
+            }
+
+            Debug.WriteLine($"Error: {error.Message}");
+            // Keep the same reconnect route as the current SignalR implementation.
+            await TryReconnectAsync();
+        }
 
         /// <summary>
         /// 接続処理
@@ -530,6 +540,11 @@ namespace TatehamaATS_v1.Network
         /// <returns>ユーザーのアクションが必要かどうか</returns>
         private async Task<bool> Connect()
         {
+            if (_connection == null)
+            {
+                throw new InvalidOperationException("_connection is not initialized.");
+            }
+
             AddExceptionAction?.Invoke(new NetworkConnectException(7, "通信部接続失敗"));
             ConnectionStatusChanged?.Invoke(connected);
 
@@ -538,7 +553,7 @@ namespace TatehamaATS_v1.Network
             {
                 try
                 {
-                    await _connection.StartAsync();
+                    await _connection.StartAsync(CancellationToken.None);
                     Debug.WriteLine("Connected");
                     connected = true;
                     ConnectionStatusChanged?.Invoke(connected);
@@ -712,7 +727,7 @@ namespace TatehamaATS_v1.Network
                     previousStatus = currentStatus;
                     //Debug.WriteLine($"{SendData}");        
                     DataFromServer dataFromServer;
-                    dataFromServer = await _connection.InvokeAsync<DataFromServer>("SendData_ATS", SendData);
+                    dataFromServer = await _connection.SendAtsDataAsync(SendData, CancellationToken.None);
 
                     if (dataFromServer.StatusFlags.HasFlag(ServerStatusFlags.IsOnPreviousTrain))
                     {
@@ -784,7 +799,7 @@ namespace TatehamaATS_v1.Network
         {
             try
             {
-                await _connection.InvokeAsync<DataFromServer>("DriverGetsOff", OverrideDiaName);
+                await _connection.NotifyDriverGetsOffAsync(OverrideDiaName, CancellationToken.None);
                 previousDriveStatus = false;
             }
             catch (WebSocketException e) when (e.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely)
