@@ -218,10 +218,8 @@
             Controls.Add(Image_ATSReady);
             Controls.Add(Image_ATSCut);
             FormBorderStyle = FormBorderStyle.FixedSingle;
-            Icon = (Icon)resources.GetObject("$this.Icon");
-            MaximumSize = new Size(316, 339);
-            MinimumSize = new Size(316, 339);
             MaximizeBox = false;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainWindow";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "主画面 | 館浜ATS - ダイヤ運転会";
