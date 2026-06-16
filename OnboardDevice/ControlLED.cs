@@ -350,7 +350,7 @@ namespace TatehamaATS_v1
                 {
                     return 125;
                 }
-                if (parse == 300)
+                if (parse is 3000)
                 {
                     return 122;
                 }
