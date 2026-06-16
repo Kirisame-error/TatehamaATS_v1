@@ -61,6 +61,10 @@ namespace TatehamaATS_v1.MainWindow
 
         public MainWindow(OpenIddictClientService service) {
             InitializeComponent();
+            // AutoScaleMode.Dpi により Size は DPI に応じてスケール済み。
+            // それを基準に Min/Max を確定し、固定サイズ挙動を維持する。
+            this.MinimumSize = this.Size;
+            this.MaximumSize = this.Size;
             this.Load += MainForm_Load;
             this.Load += (s, e) => SavePreviousWindowHandle();
             this.Activated += (s, e) => SavePreviousWindowHandle();
