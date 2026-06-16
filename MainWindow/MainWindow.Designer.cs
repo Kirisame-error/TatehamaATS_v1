@@ -218,6 +218,7 @@
             Controls.Add(Image_ATSReady);
             Controls.Add(Image_ATSCut);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximumSize = new Size(316, 339);
             MinimumSize = new Size(316, 339);
