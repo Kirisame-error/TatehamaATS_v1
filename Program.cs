@@ -85,6 +85,7 @@ namespace TatehamaATS_v1
                 // To customize application configuration such as set high DPI settings or default font,
                 // see https://aka.ms/applicationconfiguration.
                 ApplicationConfiguration.Initialize();
+                MemoryDiagnostics.Start();
                 await host.RunAsync();
             }
             catch (Exception e)
