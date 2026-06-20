@@ -81,6 +81,13 @@ namespace TatehamaATS_v1.OnboardDevice
         bool isKyokan;
 
         /// <summary>
+        /// 直前のゲーム画面状態。
+        /// 「MainGame/MainGame_Pause 以外 → MainGame/MainGame_Pause」遷移を
+        /// シナリオ読み込み完了として検知するために保持する。
+        /// </summary>
+        GameScreen _prevGameScreen = GameScreen.NotRunningGame;
+
+        /// <summary>
         /// 教官添乗状態変化
         /// </summary>
         internal event Action<bool> isKyokanChenge;
@@ -202,6 +209,20 @@ namespace TatehamaATS_v1.OnboardDevice
                 Speaker.ChengeKyokan(nowKyokan);
                 isKyokan = nowKyokan;
             }
+            // シナリオ読み込み完了の検知:
+            //   直前が「プレイ中（MainGame / MainGame_Pause）以外」かつ、
+            //   今回が「プレイ中（MainGame / MainGame_Pause）」になった瞬間を、
+            //   シナリオ読み込み完了タイミングとみなす。
+            // この遷移時に Relay 側の信号現示キャッシュを無効化し、
+            // 次回 SetSignalPhases で全信号を再送させる（TrainCrew 側状態を初期化するため）。
+            var prevPlaying = _prevGameScreen is GameScreen.MainGame or GameScreen.MainGame_Pause;
+            var nowPlaying = TcData.gameScreen is GameScreen.MainGame or GameScreen.MainGame_Pause;
+            if (!prevPlaying && nowPlaying)
+            {
+                Relay.InvalidateSignalPhaseCache();
+            }
+            // 次回呼び出しでの差分検知のため、最後に今回値を保存する
+            _prevGameScreen = TcData.gameScreen;
             Network.TcDataUpdate(TcData);
             TestWindow?.UpdataData(TcData);
         }
