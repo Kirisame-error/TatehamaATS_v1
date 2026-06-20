@@ -60,11 +60,11 @@ namespace TatehamaATS_v1.ATSDisplay
                     croppedImage = GetImageByNumber(351);
                     //コード表示無視
                     int codeC = (imageNumber >> 8) & 0xF;
-                    Bitmap codeCImage = GetImageByCodeNumber(codeC);
+                    using Bitmap codeCImage = GetImageByCodeNumber(codeC);
                     int codeB = (imageNumber >> 4) & 0xF;
-                    Bitmap codeBImage = GetImageByCodeNumber(codeB);
+                    using Bitmap codeBImage = GetImageByCodeNumber(codeB);
                     int codeA = imageNumber & 0xF;
-                    Bitmap codeAImage = GetImageByCodeNumber(codeA);
+                    using Bitmap codeAImage = GetImageByCodeNumber(codeA);
 
                     using (Graphics g = Graphics.FromImage(croppedImage)) {
                         g.DrawImage(codeAImage, 26, 0, codeAImage.Width, codeAImage.Height);
@@ -78,8 +78,11 @@ namespace TatehamaATS_v1.ATSDisplay
                 PictureBox pictureBox = GetPictureBoxByIndex(pictureBoxIndex);
 
                 Bitmap enlargedImage = EnlargePixelArt(croppedImage);
+                croppedImage.Dispose();
 
+                var oldBg = pictureBox.BackgroundImage;
                 pictureBox.BackgroundImage = enlargedImage;
+                oldBg?.Dispose();
             }
             catch (Exception ex) {
                 throw new LEDControlException(3, $"エラーが発生しました: {ex.Message} @DisplayImage", ex);

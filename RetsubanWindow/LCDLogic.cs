@@ -118,8 +118,15 @@ namespace TatehamaATS_v1.RetsubanWindow
                     x += 22; // 次の文字の位置へ移動
                 }
             }
-            //描画する
+            // 中間Bitmapは即時解放（GDI+のアンマネージドピクセルバッファ滞留を防ぐ）
+            foreach (var bmp in lcdImages)
+            {
+                bmp.Dispose();
+            }
+            //描画する。旧BackgroundImageは差し替え後に明示Dispose
+            var oldBg = LCD.BackgroundImage;
             LCD.BackgroundImage = NewLCD;
+            oldBg?.Dispose();
         }
 
         private List<string> GetDisplayList()
@@ -394,7 +401,8 @@ namespace TatehamaATS_v1.RetsubanWindow
             // 1行20文字
             int x = (index % 20) * 6 + 1;
             int y = (index / 20) * 8 + 1;
-            return EnlargePixelArt(GetLCDFontImageByPos(x, y));
+            using var small = GetLCDFontImageByPos(x, y);
+            return EnlargePixelArt(small);
         }
 
         /// <summary>
