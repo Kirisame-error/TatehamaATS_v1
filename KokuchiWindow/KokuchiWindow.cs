@@ -286,7 +286,7 @@ namespace TatehamaATS_v1.KokuchiWindow
         /// <param name="width"></param>
         /// <param name="height"></param>
         private void DisplayImageByPos(int x, int y, int width = 48, int height = 16) {
-            var Image = GetImageByPos(x, y, width, height);
+            using var Image = GetImageByPos(x, y, width, height);
             var BigImage = EnlargePixelArt(Image);
             DisplayImage(BigImage);
 
@@ -296,11 +296,10 @@ namespace TatehamaATS_v1.KokuchiWindow
         private void DisplayTimeImage(string Time) {
             if (int.TryParse(Time, out int result)) {
                 var De = GetImageByPos(50, 1);
-                var M2 = GetImageByPos(50, 1 + 17 * int.Parse(Time[0].ToString()), 9);
-                var M1 = GetImageByPos(59, 1 + 17 * int.Parse(Time[1].ToString()), 9);
-                var S2 = GetImageByPos(68, 1 + 17 * int.Parse(Time[2].ToString()), 9);
-                var S1 = GetImageByPos(74, 1 + 17 * int.Parse(Time[3].ToString()), 9);
-
+                using (var M2 = GetImageByPos(50, 1 + 17 * int.Parse(Time[0].ToString()), 9))
+                using (var M1 = GetImageByPos(59, 1 + 17 * int.Parse(Time[1].ToString()), 9))
+                using (var S2 = GetImageByPos(68, 1 + 17 * int.Parse(Time[2].ToString()), 9))
+                using (var S1 = GetImageByPos(74, 1 + 17 * int.Parse(Time[3].ToString()), 9))
                 using (Graphics g = Graphics.FromImage(De)) {
                     g.DrawImage(M2, 0, 0, M2.Width, M2.Height);
                     g.DrawImage(M1, 9, 0, M1.Width, M1.Height);
@@ -308,6 +307,7 @@ namespace TatehamaATS_v1.KokuchiWindow
                     g.DrawImage(S1, 24, 0, S1.Width, S1.Height);
                 }
                 var BigImage = EnlargePixelArt(De);
+                De.Dispose();
                 DisplayImage(BigImage);
             }
             else {
