@@ -84,6 +84,21 @@ namespace TatehamaATS_v1.OnboardDevice
         // SignalSet/UpdateRoute用の同時実行防止ロック
         private readonly SemaphoreSlim _routeSignalLock = new(1, 1);
 
+        /// <summary>
+        /// SetSignalPhases 差分送信用キャッシュ。
+        /// キー: 信号機名、値: 直近で TrainCrew に送信した現示。
+        /// 差分検出のため、SetSignalPhases 送信完了時に更新する。
+        /// </summary>
+        private readonly Dictionary<string, Phase> _lastSentSignalPhases = new();
+
+        /// <summary>
+        /// 次回の SetSignalPhases で「全信号を再送」するためのフラグ。
+        /// true の場合、差分判定をスキップしてキャッシュを破棄→全件送信する。
+        /// 初期値は true（ソフト起動直後は全信号送信が必要なため）。
+        /// シナリオ読み込み完了時 / ForceStopSignal 経由でも true に戻される。
+        /// </summary>
+        private bool _resendAllSignals = true;
+
         internal StopPassManager StopPassManager;
 
         /// <summary>
@@ -465,40 +480,88 @@ namespace TatehamaATS_v1.OnboardDevice
             phase == Phase.R ? Phase.R : Phase.None;
 
         /// <summary>
-        /// 複数の信号機の現示をまとめて TrainCrew に送信する
+        /// 複数の信号機の現示をまとめて TrainCrew に送信する。
+        /// 起動直後 / シナリオ読み込み直後（<see cref="_resendAllSignals"/> が true）は全信号を送信し、
+        /// それ以降は前回送信値（<see cref="_lastSentSignalPhases"/>）との差分のみ送信して帯域を節約する。
         /// </summary>
+        /// <param name="items">送信候補となる (信号機名, 現示) のリスト</param>
         internal async Task SetSignalPhases(IReadOnlyList<(string Name, Phase Phase)> items)
         {
+            // 候補なしなら何もしない
             if (items == null || items.Count == 0)
             {
                 return;
             }
 
+            // ゲーム本編（プレイ中 / 一時停止中）以外では送信しない
             if (TcData.gameScreen is not (TrainCrewAPI.GameScreen.MainGame or TrainCrewAPI.GameScreen.MainGame_Pause))
             {
                 return;
             }
 
+            // TrainCrew との WebSocket が未接続なら送信しない
             if (status != ConnectionState.Connected)
             {
                 return;
             }
 
+            // 「上り1閉塞」は送信対象外のため、差分判定の前に除外しておく
+            // （キャッシュにも入れない＝以降の差分計算からも常に除外）
             var filtered = items.Where(x => x.Name != "上り1閉塞").ToList();
             if (filtered.Count == 0)
             {
                 return;
             }
 
-            var args = new string[filtered.Count * 2];
-            for (int i = 0; i < filtered.Count; i++)
+            // 全送信モードではキャッシュを破棄し、以降の Where 条件を素通りさせて全件送信する
+            if (_resendAllSignals)
             {
-                args[i * 2] = filtered[i].Name;
-                args[i * 2 + 1] = filtered[i].Phase.ToString();
-                // Debug.WriteLine($"☆信号名：{filtered[i].Name}／現示：{filtered[i].Phase}");
+                _lastSentSignalPhases.Clear();
             }
 
+            // 実際に WebSocket で送る信号:
+            //   全送信モード → キャッシュ空なので全件
+            //   差分送信モード → キャッシュに無い／前回値と異なるものだけ
+            var toSend = filtered
+                .Where(item => !_lastSentSignalPhases.TryGetValue(item.Name, out var prev) || prev != item.Phase)
+                .ToList();
+
+            // 差分0件なら WebSocket 送信自体をスキップ
+            if (toSend.Count == 0)
+            {
+                return;
+            }
+
+            // SetSignalPhases コマンドの args 配列を構築
+            // 形式: [信号名1, 現示1, 信号名2, 現示2, ...]
+            // 同時にキャッシュ（_lastSentSignalPhases）を今回の送信値で更新する
+            var args = new string[toSend.Count * 2];
+            for (int i = 0; i < toSend.Count; i++)
+            {
+                args[i * 2] = toSend[i].Name;
+                args[i * 2 + 1] = toSend[i].Phase.ToString();
+                _lastSentSignalPhases[toSend[i].Name] = toSend[i].Phase;
+                // Debug.WriteLine($"☆信号名：{toSend[i].Name}／現示：{toSend[i].Phase}");
+            }
+
+            // 全送信モードはここまで来たら役目を終えるので解除する
+            _resendAllSignals = false;
+
             await SendSingleCommand("SetSignalPhases", args);
+        }
+
+        /// <summary>
+        /// 信号現示の送信履歴キャッシュを無効化し、次回の <see cref="SetSignalPhases"/> 呼び出しで
+        /// 全信号を強制的に再送させる。
+        /// 呼び出し元:
+        ///   - シナリオ読み込み完了時（<see cref="CableIO"/> 側で GameScreen 遷移を検知して呼ぶ）
+        ///   - <see cref="ForceStopSignal"/>（強制停止で TrainCrew 側現示を上書きするため、解除後に整合性を取り直す）
+        /// </summary>
+        internal void InvalidateSignalPhaseCache()
+        {
+            // 実キャッシュのクリアは次回 SetSignalPhases 内で行う
+            // （送信前にクリアして競合状態を作らないよう、フラグだけ立てる）
+            _resendAllSignals = true;
         }
 
         internal void EMSet(List<EmergencyLightData> emergencyLightDatas)
@@ -966,6 +1029,11 @@ namespace TatehamaATS_v1.OnboardDevice
             //Todo:ATS復帰入力
         }
 
+        /// <summary>
+        /// 全信号を強制的に R（停止）または None（解除）で TrainCrew に送信する。
+        /// 緊急停止系の動作で TrainCrew 側現示を一括上書きするためのルート。
+        /// </summary>
+        /// <param name="IsStop">true=全信号 R、false=全信号 None</param>
         public void ForceStopSignal(bool IsStop)
         {
             TrainCrewInput.GetTrainState();
@@ -974,6 +1042,9 @@ namespace TatehamaATS_v1.OnboardDevice
                 .ToList()
                 .Select(s => (Name: s.name, Phase: phase))
                 .ToList();
+            // このルートでは通常の差分送信ルートを通さずに現示を上書きしているため、
+            // 差分送信キャッシュと実機状態がずれる。次回 SetSignalPhases で全信号を再送して整合を取る
+            InvalidateSignalPhaseCache();
             _ = SetSignalPhases(items);
         }
 
