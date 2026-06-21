@@ -17,6 +17,19 @@ namespace TatehamaATS_v1.RetsubanWindow
     {
 
         private List<string> LCDFontList = new List<string>();
+        private List<string>? _lastDisplayList;
+
+        /// <summary>
+        /// 拡大後の文字 Bitmap を永続キャッシュ（Dispose しない）。
+        /// 文字種は LCDFontList で有限・固定のため、最大でも数百個・数 MB に収まる。
+        /// </summary>
+        private readonly Dictionary<string, Bitmap> _charCache = new();
+
+        /// <summary>
+        /// LCD への描画先となる長寿命バックバッファ。LCD.Size 変化時のみ再確保。
+        /// </summary>
+        private Bitmap? _backBuffer;
+        private Size _backBufferSize;
 
         private int nowUnkoSetting = -1;
         private int nowStopSetting = -1;
@@ -93,40 +106,45 @@ namespace TatehamaATS_v1.RetsubanWindow
         {
             var displayList = GetDisplayList();
 
-            // 画像を取得してリストに格納
-            List<Bitmap> lcdImages = new List<Bitmap>();
-            foreach (var str in displayList)
+            // 前回と同一表示なら再描画スキップ（GDI 操作自体を省く）
+            if (_lastDisplayList != null && _lastDisplayList.SequenceEqual(displayList))
             {
-                lcdImages.Add(GetLCDFontImageByChar(str));
+                return;
+            }
+            _lastDisplayList = displayList;
+
+            // バックバッファを LCD.Size に合わせて準備（サイズ不変なら使い回し）
+            var size = LCD.Size;
+            if (_backBuffer == null || _backBufferSize != size)
+            {
+                var oldBuf = _backBuffer;
+                var oldBg = LCD.BackgroundImage;
+                _backBuffer = new Bitmap(size.Width, size.Height);
+                _backBufferSize = size;
+                LCD.BackgroundImage = _backBuffer;
+                // PictureBox がまだ旧バッファを参照中の可能性があるため、差し替え完了後に解放
+                if (!ReferenceEquals(oldBg, _backBuffer)) oldBg?.Dispose();
+                if (!ReferenceEquals(oldBuf, _backBuffer)) oldBuf?.Dispose();
             }
 
-            // 画像をLCD領域にならべる
-            var NewLCD = new Bitmap(LCD.Width, LCD.Height);
             // 起点を8,5として、xは22、yは32ごとに並べる。横は16文字制限
-            using (Graphics g = Graphics.FromImage(NewLCD))
+            using (Graphics g = Graphics.FromImage(_backBuffer))
             {
+                g.Clear(Color.Transparent);
                 int x = 8;
                 int y = 5;
-                for (int i = 0; i < lcdImages.Count; i++)
+                for (int i = 0; i < displayList.Count; i++)
                 {
                     if (i % 16 == 0 && i != 0) // 15文字ごとに改行
                     {
-                        x = 8; // xをリセット
-                        y += 32; // yを次の行に移動
+                        x = 8;
+                        y += 32;
                     }
-                    g.DrawImage(lcdImages[i], x, y, 20, 28); // サイズは20x28で描画
-                    x += 22; // 次の文字の位置へ移動
+                    g.DrawImage(GetLCDFontImageByChar(displayList[i]), x, y, 20, 28);
+                    x += 22;
                 }
             }
-            // 中間Bitmapは即時解放（GDI+のアンマネージドピクセルバッファ滞留を防ぐ）
-            foreach (var bmp in lcdImages)
-            {
-                bmp.Dispose();
-            }
-            //描画する。旧BackgroundImageは差し替え後に明示Dispose
-            var oldBg = LCD.BackgroundImage;
-            LCD.BackgroundImage = NewLCD;
-            oldBg?.Dispose();
+            LCD.Invalidate();
         }
 
         private List<string> GetDisplayList()
@@ -397,12 +415,18 @@ namespace TatehamaATS_v1.RetsubanWindow
             {
                 str = "?";
             }
+            if (_charCache.TryGetValue(str, out var cached))
+            {
+                return cached;
+            }
             int index = LCDFontList.IndexOf(str);
             // 1行20文字
             int x = (index % 20) * 6 + 1;
             int y = (index / 20) * 8 + 1;
             using var small = GetLCDFontImageByPos(x, y);
-            return EnlargePixelArt(small);
+            var enlarged = EnlargePixelArt(small);
+            _charCache[str] = enlarged;
+            return enlarged;
         }
 
         /// <summary>
