@@ -19,6 +19,7 @@ namespace TatehamaATS_v1
         {
             try
             {
+                BitmapAllocTracker.Start();
                 var host = new HostBuilder()
                     .ConfigureLogging(options => options.AddDebug())
                     .ConfigureServices(services =>
