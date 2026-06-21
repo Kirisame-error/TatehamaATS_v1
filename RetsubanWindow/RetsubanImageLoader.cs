@@ -16,13 +16,13 @@ namespace TatehamaATS_v1.RetsubanWindow
         // If not found, return a bitmap filled with magenta (255,0,255) sized to 'size'.
         public static Image Load(string baseName, Size size)
         {
-            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("RetsubanImageLoader.Load entry");
             if (string.IsNullOrEmpty(baseName)) baseName = "";
             var cacheKey = $"{baseName}|{size.Width}x{size.Height}";
             if (_cache.TryGetValue(cacheKey, out var cached))
             {
                 return cached;
             }
+            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("RetsubanImageLoader.Load entry");
             var result = LoadInternal(baseName, size);
             _cache[cacheKey] = result;
             return result;
