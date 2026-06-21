@@ -38,6 +38,7 @@ namespace TatehamaATS_v1.KokuchiWindow
             kokuchiSize = originSize;
             ledLocation = KokuchiLED.Location;
             ledSize = KokuchiLED.Size;
+            Utils.BitmapAllocTracker.Inc("Kokuchi:41 ledOrigin init");
             ledOrigin = KokuchiLED.BackgroundImage != null ? KokuchiLED.BackgroundImage : new Bitmap(289, 97);
             DisplayImageByPos(1, 154);
             TopMost = true;
@@ -331,6 +332,7 @@ namespace TatehamaATS_v1.KokuchiWindow
         /// </summary>
         private void DisplayImage() {
             var oldImage = KokuchiLED.BackgroundImage;
+            Utils.BitmapAllocTracker.Inc("Kokuchi:334 DisplayImage resize");
             KokuchiLED.BackgroundImage = new Bitmap(ledOrigin, KokuchiLED.Size);
             oldImage?.Dispose();
         }
@@ -341,6 +343,7 @@ namespace TatehamaATS_v1.KokuchiWindow
         /// <param name="number">切り出す画像の番号</param>
         /// <returns>切り出された画像</returns>
         private Bitmap GetImageByPos(int x, int y, int width = 48, int height = 16) {
+            Utils.BitmapAllocTracker.Inc("Kokuchi:344 GetImageByPos");
             Bitmap croppedImage = new Bitmap(width, height);
             using (Graphics g = Graphics.FromImage(croppedImage)) {
                 g.DrawImage(sourceImage, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
@@ -358,6 +361,7 @@ namespace TatehamaATS_v1.KokuchiWindow
             int newWidth = original.Width * 6;
             int newHeight = original.Height * 6;
 
+            Utils.BitmapAllocTracker.Inc("Kokuchi:361 EnlargePixelArt");
             Bitmap enlargedImage = new Bitmap(newWidth + 1, newHeight + 1);
             using (Graphics g = Graphics.FromImage(enlargedImage)) {
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -378,8 +382,10 @@ namespace TatehamaATS_v1.KokuchiWindow
 
         private void timer1_Tick(object sender, EventArgs e) {
             if (this.BackgroundImage == null) {
+                Utils.BitmapAllocTracker.Inc("Kokuchi:381 timer1 BG init");
                 this.BackgroundImage = new Bitmap(KokuchiResource.Kokuchi_Background);
                 var oldWaku = KokuchiLED.Image;
+                Utils.BitmapAllocTracker.Inc("Kokuchi:383 timer1 Waku init");
                 KokuchiLED.Image = new Bitmap(KokuchiResource.KokuchiLED_Waku, new Size(ledSize.Width * kokuchiSize.Height / originSize.Height, ledSize.Height * kokuchiSize.Height / originSize.Height));
                 oldWaku?.Dispose();
             }
@@ -487,6 +493,7 @@ namespace TatehamaATS_v1.KokuchiWindow
             }
             kokuchiSize = new Size(newWidth, newHeight);
             Size = new Size(newWidth + Size.Width - ClientSize.Width, newHeight + Size.Height - ClientSize.Height);
+            Utils.BitmapAllocTracker.Inc("Kokuchi:490 ResizeEnd BG");
             var backImage = new Bitmap(KokuchiResource.Kokuchi_Background, kokuchiSize);
             var oldImage = BackgroundImage;
             BackgroundImage = backImage;
@@ -496,11 +503,13 @@ namespace TatehamaATS_v1.KokuchiWindow
             KokuchiLED.Size = new Size(ledSize.Width * newHeight / originSize.Height, ledSize.Height * newHeight / originSize.Height);
             DisplayImage();
             oldImage = KokuchiLED.Image;
+            Utils.BitmapAllocTracker.Inc("Kokuchi:499 ResizeEnd Waku");
             KokuchiLED.Image = new Bitmap(KokuchiResource.KokuchiLED_Waku, KokuchiLED.Size);
             oldImage?.Dispose();
 
 
             oldImage = Transparency.Image;
+            Utils.BitmapAllocTracker.Inc("Kokuchi:504 ResizeEnd Transparency");
             Transparency.Image = new Bitmap(KokuchiResource.Kokuchi_Transparency, kokuchiSize);
             oldImage?.Dispose();
         }
