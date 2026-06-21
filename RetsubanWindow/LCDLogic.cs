@@ -436,6 +436,7 @@ namespace TatehamaATS_v1.RetsubanWindow
         /// <returns>切り出された画像</returns>
         private Bitmap GetLCDFontImageByPos(int x, int y, int width = 5, int height = 7)
         {
+            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("LCD:415 GetLCDFontImageByPos");
             Bitmap croppedImage = new Bitmap(width, height);
             using (Graphics g = Graphics.FromImage(croppedImage))
             {
@@ -454,6 +455,7 @@ namespace TatehamaATS_v1.RetsubanWindow
             int newWidth = original.Width * 4;
             int newHeight = original.Height * 4;
 
+            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("LCD:433 EnlargePixelArt");
             Bitmap enlargedImage = new Bitmap(newWidth + 1, newHeight + 1);
             using (Graphics g = Graphics.FromImage(enlargedImage))
             {
