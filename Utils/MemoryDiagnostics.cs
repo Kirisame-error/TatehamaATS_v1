@@ -65,7 +65,7 @@ namespace TatehamaATS_v1.Utils
         {
             if (_logPath == null) return;
 
-            var proc = Process.GetCurrentProcess();
+            using var proc = Process.GetCurrentProcess();
             proc.Refresh();
 
             long ws = proc.WorkingSet64;
@@ -136,7 +136,7 @@ namespace TatehamaATS_v1.Utils
 
         private static void WriteHeader()
         {
-            var proc = Process.GetCurrentProcess();
+            using var proc = Process.GetCurrentProcess();
             var sb = new StringBuilder();
             sb.AppendLine("# MemoryDiagnostics log");
             sb.AppendLine($"# Process: {proc.ProcessName} (PID={proc.Id})");
