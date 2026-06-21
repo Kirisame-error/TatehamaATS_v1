@@ -137,11 +137,11 @@ namespace TatehamaATS_v1.RetsubanWindow
                 {
                     if (i % 16 == 0 && i != 0) // 15文字ごとに改行
                     {
-                        x = 8;
-                        y += 32;
+                        x = 8; // xをリセット
+                        y += 32; // yを次の行に移動
                     }
-                    g.DrawImage(GetLCDFontImageByChar(displayList[i]), x, y, 20, 28);
-                    x += 22;
+                    g.DrawImage(GetLCDFontImageByChar(displayList[i]), x, y, 20, 28); // サイズは20x28で描画
+                    x += 22; // 次の文字の位置へ移動
                 }
             }
             LCD.Invalidate();
