@@ -8,6 +8,9 @@ namespace TatehamaATS_v1.ATSDisplay
     public partial class LEDWindow : Form {
         private Bitmap sourceImage;
         internal event Action LEDTestModePush;
+        private readonly Dictionary<int, Bitmap> _numberImageCache = new();
+        private readonly Dictionary<int, Bitmap> _codeImageCache = new();
+        private readonly Dictionary<int, Bitmap> _enlargedCache = new();
 
         private Size originSize = new Size(277, 360);
         private Size displaySize = new Size(277, 360);
@@ -55,16 +58,25 @@ namespace TatehamaATS_v1.ATSDisplay
         /// <param name="imageNumber">表示する画像の番号</param>
         internal void DisplayImage(int pictureBoxIndex, int imageNumber) {
             try {
+                if (_enlargedCache.TryGetValue(imageNumber, out var cachedEnlarged)) {
+                    GetPictureBoxByIndex(pictureBoxIndex).BackgroundImage = cachedEnlarged;
+                    return;
+                }
+
+                bool isComposite = (0x180 <= imageNumber && imageNumber <= 0x1FF || 0x280 <= imageNumber && imageNumber <= 0x2FF || 0x380 <= imageNumber && imageNumber <= 0x3FF || 0x580 <= imageNumber && imageNumber <= 0x5FF || 0x680 <= imageNumber && imageNumber <= 0x6FF || 0x780 <= imageNumber && imageNumber <= 0x7FF || 0x880 <= imageNumber && imageNumber <= 0x8FF);
+
                 Bitmap croppedImage;
-                if (0x180 <= imageNumber && imageNumber <= 0x1FF || 0x280 <= imageNumber && imageNumber <= 0x2FF || 0x380 <= imageNumber && imageNumber <= 0x3FF || 0x580 <= imageNumber && imageNumber <= 0x5FF || 0x680 <= imageNumber && imageNumber <= 0x6FF || 0x780 <= imageNumber && imageNumber <= 0x7FF || 0x880 <= imageNumber && imageNumber <= 0x8FF) {
-                    croppedImage = GetImageByNumber(351);
+                if (isComposite) {
+                    var baseImg = GetImageByNumber(351);
+                    croppedImage = new Bitmap(baseImg);
+                    BitmapAllocTracker.Inc("LED:DisplayImage composite clone");
                     //コード表示無視
                     int codeC = (imageNumber >> 8) & 0xF;
-                    using Bitmap codeCImage = GetImageByCodeNumber(codeC);
+                    Bitmap codeCImage = GetImageByCodeNumber(codeC);
                     int codeB = (imageNumber >> 4) & 0xF;
-                    using Bitmap codeBImage = GetImageByCodeNumber(codeB);
+                    Bitmap codeBImage = GetImageByCodeNumber(codeB);
                     int codeA = imageNumber & 0xF;
-                    using Bitmap codeAImage = GetImageByCodeNumber(codeA);
+                    Bitmap codeAImage = GetImageByCodeNumber(codeA);
 
                     using (Graphics g = Graphics.FromImage(croppedImage)) {
                         g.DrawImage(codeAImage, 26, 0, codeAImage.Width, codeAImage.Height);
@@ -78,11 +90,13 @@ namespace TatehamaATS_v1.ATSDisplay
                 PictureBox pictureBox = GetPictureBoxByIndex(pictureBoxIndex);
 
                 Bitmap enlargedImage = EnlargePixelArt(croppedImage);
-                croppedImage.Dispose();
 
-                var oldBg = pictureBox.BackgroundImage;
+                if (isComposite) {
+                    croppedImage.Dispose();
+                }
+
                 pictureBox.BackgroundImage = enlargedImage;
-                oldBg?.Dispose();
+                _enlargedCache[imageNumber] = enlargedImage;
             }
             catch (Exception ex) {
                 throw new LEDControlException(3, $"エラーが発生しました: {ex.Message} @DisplayImage", ex);
@@ -124,6 +138,8 @@ namespace TatehamaATS_v1.ATSDisplay
         /// <param name="number">切り出す画像の番号</param>
         /// <returns>切り出された画像</returns>
         private Bitmap GetImageByNumber(int number) {
+            if (_numberImageCache.TryGetValue(number, out var hit)) return hit;
+
             int columns = 8;
             int rows = 32;
             int width = 32;
@@ -146,6 +162,7 @@ namespace TatehamaATS_v1.ATSDisplay
                 g.DrawImage(sourceImage, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
             }
 
+            _numberImageCache[number] = croppedImage;
             return croppedImage;
         }
 
@@ -155,6 +172,8 @@ namespace TatehamaATS_v1.ATSDisplay
         /// <param name="number">切り出す画像の番号</param>
         /// <returns>切り出された画像</returns>
         private Bitmap GetImageByCodeNumber(int number) {
+            if (_codeImageCache.TryGetValue(number, out var hit)) return hit;
+
             int columns = 4;
             int rows = 4;
             int width = 6;
@@ -180,6 +199,7 @@ namespace TatehamaATS_v1.ATSDisplay
                 g.DrawImage(sourceImage, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
             }
 
+            _codeImageCache[number] = croppedImage;
             return croppedImage;
         }
 

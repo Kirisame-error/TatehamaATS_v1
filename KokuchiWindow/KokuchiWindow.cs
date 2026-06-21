@@ -26,6 +26,11 @@ namespace TatehamaATS_v1.KokuchiWindow
 
         private Image ledOrigin;
 
+        private readonly Dictionary<(int, int, int, int), Bitmap> _posCache = new();
+        private readonly Dictionary<Bitmap, Bitmap> _enlargedCache = new();
+        private readonly Dictionary<(Image, int, int), Bitmap> _resizedCache = new();
+        private readonly Dictionary<string, Bitmap> _timeImageCache = new();
+
         /// <summary>
         /// 故障発生
         /// </summary>
@@ -287,7 +292,7 @@ namespace TatehamaATS_v1.KokuchiWindow
         /// <param name="width"></param>
         /// <param name="height"></param>
         private void DisplayImageByPos(int x, int y, int width = 48, int height = 16) {
-            using var Image = GetImageByPos(x, y, width, height);
+            var Image = GetImageByPos(x, y, width, height);
             var BigImage = EnlargePixelArt(Image);
             DisplayImage(BigImage);
 
@@ -296,11 +301,16 @@ namespace TatehamaATS_v1.KokuchiWindow
 
         private void DisplayTimeImage(string Time) {
             if (int.TryParse(Time, out int result)) {
-                var De = GetImageByPos(50, 1);
-                using (var M2 = GetImageByPos(50, 1 + 17 * int.Parse(Time[0].ToString()), 9))
-                using (var M1 = GetImageByPos(59, 1 + 17 * int.Parse(Time[1].ToString()), 9))
-                using (var S2 = GetImageByPos(68, 1 + 17 * int.Parse(Time[2].ToString()), 9))
-                using (var S1 = GetImageByPos(74, 1 + 17 * int.Parse(Time[3].ToString()), 9))
+                if (_timeImageCache.TryGetValue(Time, out var cachedTime)) {
+                    DisplayImage(cachedTime);
+                    return;
+                }
+
+                var De = new Bitmap(GetImageByPos(50, 1));
+                var M2 = GetImageByPos(50, 1 + 17 * int.Parse(Time[0].ToString()), 9);
+                var M1 = GetImageByPos(59, 1 + 17 * int.Parse(Time[1].ToString()), 9);
+                var S2 = GetImageByPos(68, 1 + 17 * int.Parse(Time[2].ToString()), 9);
+                var S1 = GetImageByPos(74, 1 + 17 * int.Parse(Time[3].ToString()), 9);
                 using (Graphics g = Graphics.FromImage(De)) {
                     g.DrawImage(M2, 0, 0, M2.Width, M2.Height);
                     g.DrawImage(M1, 9, 0, M1.Width, M1.Height);
@@ -309,6 +319,7 @@ namespace TatehamaATS_v1.KokuchiWindow
                 }
                 var BigImage = EnlargePixelArt(De);
                 De.Dispose();
+                _timeImageCache[Time] = BigImage;
                 DisplayImage(BigImage);
             }
             else {
@@ -321,9 +332,7 @@ namespace TatehamaATS_v1.KokuchiWindow
         /// </summary>
         /// <param name="bigImage">出す画像</param>
         private void DisplayImage(Bitmap bigImage) {
-            var oldOrigin = ledOrigin;
             ledOrigin = bigImage;
-            oldOrigin?.Dispose();
             DisplayImage();
         }
 
@@ -331,10 +340,17 @@ namespace TatehamaATS_v1.KokuchiWindow
         /// 既に出ている画像をリサイズする
         /// </summary>
         private void DisplayImage() {
-            var oldImage = KokuchiLED.BackgroundImage;
+            var size = KokuchiLED.Size;
+            var key = (ledOrigin, size.Width, size.Height);
+            if (_resizedCache.TryGetValue(key, out var cachedResized)) {
+                KokuchiLED.BackgroundImage = cachedResized;
+                return;
+            }
+
             Utils.BitmapAllocTracker.Inc("Kokuchi:334 DisplayImage resize");
-            KokuchiLED.BackgroundImage = new Bitmap(ledOrigin, KokuchiLED.Size);
-            oldImage?.Dispose();
+            Bitmap bm = new Bitmap(ledOrigin, KokuchiLED.Size);
+            _resizedCache[key] = bm;
+            KokuchiLED.BackgroundImage = bm;
         }
 
         /// <summary>
@@ -343,12 +359,18 @@ namespace TatehamaATS_v1.KokuchiWindow
         /// <param name="number">切り出す画像の番号</param>
         /// <returns>切り出された画像</returns>
         private Bitmap GetImageByPos(int x, int y, int width = 48, int height = 16) {
+            var key = (x, y, width, height);
+            if (_posCache.TryGetValue(key, out var hit)) {
+                return hit;
+            }
+
             Utils.BitmapAllocTracker.Inc("Kokuchi:344 GetImageByPos");
             Bitmap croppedImage = new Bitmap(width, height);
             using (Graphics g = Graphics.FromImage(croppedImage)) {
                 g.DrawImage(sourceImage, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
             }
 
+            _posCache[key] = croppedImage;
             return croppedImage;
         }
 
@@ -358,6 +380,10 @@ namespace TatehamaATS_v1.KokuchiWindow
         /// <param name="original">元の画像</param>
         /// <returns>6倍に拡大された画像</returns>
         private Bitmap EnlargePixelArt(Bitmap original) {
+            if (_enlargedCache.TryGetValue(original, out var hit)) {
+                return hit;
+            }
+
             int newWidth = original.Width * 6;
             int newHeight = original.Height * 6;
 
@@ -377,6 +403,7 @@ namespace TatehamaATS_v1.KokuchiWindow
                 }
             }
 
+            _enlargedCache[original] = enlargedImage;
             return enlargedImage;
         }
 
