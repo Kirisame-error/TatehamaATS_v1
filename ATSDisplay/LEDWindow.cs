@@ -69,7 +69,6 @@ namespace TatehamaATS_v1.ATSDisplay
                 if (isComposite) {
                     var baseImg = GetImageByNumber(351);
                     croppedImage = new Bitmap(baseImg);
-                    BitmapAllocTracker.Inc("LED:DisplayImage composite clone");
                     //コード表示無視
                     int codeC = (imageNumber >> 8) & 0xF;
                     Bitmap codeCImage = GetImageByCodeNumber(codeC);
@@ -112,7 +111,6 @@ namespace TatehamaATS_v1.ATSDisplay
             int newWidth = original.Width * 6;
             int newHeight = original.Height * 6;
 
-            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("LED:101 EnlargePixelArt");
             Bitmap enlargedImage = new Bitmap(newWidth + 1, newHeight + 1);
             using (Graphics g = Graphics.FromImage(enlargedImage)) {
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -156,7 +154,6 @@ namespace TatehamaATS_v1.ATSDisplay
             int x = margin + colIndex * (width + margin);
             int y = margin + rowIndex * (height + margin);
 
-            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("LED:142 GetImageByNumber");
             Bitmap croppedImage = new Bitmap(width, height);
             using (Graphics g = Graphics.FromImage(croppedImage)) {
                 g.DrawImage(sourceImage, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
@@ -193,7 +190,6 @@ namespace TatehamaATS_v1.ATSDisplay
             int x = dx + margin + colIndex * (width + margin);
             int y = dy + margin + rowIndex * (height + margin);
 
-            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("LED:175 GetImageByCodeNumber");
             Bitmap croppedImage = new Bitmap(width, height);
             using (Graphics g = Graphics.FromImage(croppedImage)) {
                 g.DrawImage(sourceImage, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);

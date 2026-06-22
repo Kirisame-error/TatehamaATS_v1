@@ -22,7 +22,6 @@ namespace TatehamaATS_v1.RetsubanWindow
             {
                 return cached;
             }
-            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("RetsubanImageLoader.Load entry");
             var result = LoadInternal(baseName, size);
             _cache[cacheKey] = result;
             return result;
@@ -48,7 +47,6 @@ namespace TatehamaATS_v1.RetsubanWindow
                                 var img = Image.FromStream(fs);
                                 if (size.Width > 0 && size.Height > 0 && (img.Width != size.Width || img.Height != size.Height))
                                 {
-                                    TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("Loader:resize bmp");
                                     var bmp = new Bitmap(size.Width, size.Height);
                                     using (var g = Graphics.FromImage(bmp))
                                     {
@@ -57,7 +55,6 @@ namespace TatehamaATS_v1.RetsubanWindow
                                     img.Dispose();
                                     return bmp;
                                 }
-                                TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("Loader:same-size clone");
                                 return new Bitmap(img);
                             }
                         }
@@ -71,7 +68,6 @@ namespace TatehamaATS_v1.RetsubanWindow
             // not found -> return magenta bitmap sized to control
             var w = Math.Max(1, size.Width);
             var h = Math.Max(1, size.Height);
-            TatehamaATS_v1.Utils.BitmapAllocTracker.Inc("Loader:magenta fallback");
             var bmFallback = new Bitmap(w, h);
             using (var g = Graphics.FromImage(bmFallback))
             {
