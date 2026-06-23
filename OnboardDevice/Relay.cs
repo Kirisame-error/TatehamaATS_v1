@@ -99,6 +99,16 @@ namespace TatehamaATS_v1.OnboardDevice
         /// </summary>
         private bool _resendAllSignals = true;
 
+        /// <summary>
+        /// 定期キャッシュクリアの間隔 (ms)。1秒ごとに全信号再送をトリガーする。
+        /// </summary>
+        private const int CacheClearIntervalMs = 1000;
+
+        /// <summary>
+        /// <see cref="CacheClearIntervalMs"/> ごとに <see cref="InvalidateSignalPhaseCache"/> を呼び出すタイマー。
+        /// </summary>
+        private readonly System.Threading.Timer _cacheClearTimer;
+
         internal StopPassManager StopPassManager;
 
         /// <summary>
@@ -248,6 +258,12 @@ namespace TatehamaATS_v1.OnboardDevice
             OverrideDiaName = "9999";
             TrainCrewInput.Init();
             _webSocket = new ClientWebSocket();
+
+            _cacheClearTimer = new System.Threading.Timer(
+                _ => InvalidateSignalPhaseCache(),
+                null,
+                CacheClearIntervalMs,
+                CacheClearIntervalMs);
         }
 
         /// <summary>
@@ -947,6 +963,7 @@ namespace TatehamaATS_v1.OnboardDevice
             }
 
             _webSocket.Dispose();
+            _cacheClearTimer.Dispose();
         }
 
         /// <summary>
