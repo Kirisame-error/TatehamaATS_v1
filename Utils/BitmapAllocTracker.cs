@@ -26,7 +26,7 @@ namespace TatehamaATS_v1.Utils
             if (_dumper != null) return;
             try
             {
-                var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "logs", "memleak");
+                var dir = Path.Combine(Directory.GetCurrentDirectory(), "logs");
                 Directory.CreateDirectory(dir);
                 _outPath = Path.Combine(dir, $"alloc_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
                 File.WriteAllText(_outPath, "timestamp,tag,cumulative_count\n");
