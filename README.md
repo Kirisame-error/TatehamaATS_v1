@@ -25,3 +25,6 @@ V：Ver.表示
 Enter：設定/進  
 BackSpaceまたはDelete：消去/戻  
 Esc：取消  
+
+### 著作表記
+匠手　津道
